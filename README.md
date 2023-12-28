@@ -1,6 +1,5 @@
-#AlphaZero
+# AlphaZero Game Player
 
-Olá colegas
+Miguel:
 
-
-Olá colegas, miguel aqui. Vejam o Go
+- [ ] Teste
