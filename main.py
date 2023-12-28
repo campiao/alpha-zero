@@ -12,7 +12,7 @@ from alphazero import MCTS
 import os
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
-
+#oi
 torch.manual_seed(0)
 random.seed(0)
 np.random.seed(0)

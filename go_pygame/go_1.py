@@ -1,5 +1,4 @@
 import numpy as np
-import pygame
 
 class Go():
 
@@ -13,7 +12,7 @@ class Go():
     def __init__(self):
         self.row_count = 9
         self.column_count = 9
-        self.komi = 5.5
+        self.komi = 6.5
         self.action_size = self.row_count * self.column_count + 1
         self.liberties = []
         self.block = []
@@ -114,20 +113,30 @@ class Go():
         # print(state)
         return state
 
-    def draw_board(self, screen, background):
-        screen.blit(background, (0, 0))
+    def print_board(self, state) -> None:
+            '''
+            # Description:
+            Draws the board in the console.
 
-        for i in range(self.row_count):
-            for j in range(self.column_count):
-                x = 45 + j * 40
-                y = 45 + i * 40
+            # Returns:
+            None
+            '''
 
-                if self.get_initial_state()[i][j] == 1:
-                    pygame.draw.circle(screen, BLACK, (x, y), 20)
-                elif self.get_initial_state()[i][j] == -1:
-                    pygame.draw.circle(screen, WHITE, (x, y), 20)
+        # Print column coordinates
+            print("   ", end="")
+            for j in range(len(state[0])):
+                print(f"{j:2}", end=" ")
+            print("\n  +", end="")
+            for _ in range(len(state[0])):
+                print("---", end="")
+            print()
 
-        pygame.display.flip()
+            # Print rows with row coordinates
+            for i in range(len(state)):
+                print(f"{i:2}|", end=" ")
+                for j in range(len(state[0])):
+                    print(f"{str(int(state[i][j])):2}", end=" ")
+                print()
     
     def captures(self, state: list,player: int, a:int, b:int):
         '''
@@ -334,67 +343,26 @@ class Go():
 
 # Runtime
     
+game = Go()
+state = game.get_initial_state()
+game.print_board(state)
 
+player = 1
 
-def main():
-    pygame.init()
-    pygame.display.set_caption('Go Game')
+while True:
+    a, b = tuple(int(x.strip()) for x in input("\nInput your move: ").split(' '))
+    print("\n")
+    if a == -1 and b == -1:
+        action = game.row_count * game.column_count
+    action = a * 9 + b
+    state = game.get_next_state(state, action, player)
 
-    width, height = 820, 820
-    screen = pygame.display.set_mode((width, height))
-    clock = pygame.time.Clock()
+    winner, win = game.get_value_and_terminated(state, action)
+    if win:
 
-    background = pygame.image.load('images/ramin.jpg').convert()
-    board = Go()
+        game.print_board(state)
+        print(f"player {winner} wins")
+        exit()
 
-    player = 1
-
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
-            elif event.type == pygame.MOUSEBUTTONDOWN and player == 1:
-                x, y = event.pos
-                a = (x - 5) // 40
-                b = (y - 5) // 40
-                action = a * 9 + b
-                if board.is_valid_move(board.get_initial_state(), (a, b), player):
-                    state = board.get_next_state(board.get_initial_state(), action, player)
-                    winner, win = board.get_value_and_terminated(state, action)
-                    if win:
-                        print(f"Player {winner} wins!")
-                        pygame.quit()
-                        exit()
-                    player = -player
-
-        board.draw_board(screen, background)  # Corrigido aqui
-        pygame.display.flip()
-        clock.tick(30)
-
-if __name__ == '__main__':
-    main()
-    
-# game = Go()
-# state = game.get_initial_state()
-# game.print_board(state)
-
-# player = 1
-
-# while True:
-#     a, b = tuple(int(x.strip()) for x in input("\nInput your move: ").split(' '))
-#     print("\n")
-#     if a == -1 and b == -1:
-#         action = game.row_count * game.column_count
-#     action = a * 9 + b
-#     state = game.get_next_state(state, action, player)
-
-#     winner, win = game.get_value_and_terminated(state, action)
-#     if win:
-
-#         game.print_board(state)
-#         print(f"player {winner} wins")
-#         exit()
-
-#     player = - player
-#     game.print_board(state)
+    player = - player
+    game.print_board(state)
