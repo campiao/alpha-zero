@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class Attaxx:
     def __init__(self, args):
         self.column_count = args[0]
@@ -26,7 +27,8 @@ class Attaxx:
         return state
 
     def is_valid_move(self, state, action, player):
-        a, b, a1, b1 = action
+        move = self.int_to_move(action)
+        a, b, a1, b1 = move[0], move[1], move[2], move[3]
         if (a==a1 and b==b1):
             return False
         if abs(a-a1)>2 or abs(b-b1)>2 or state[a1][b1]!=0 or state[a][b]!=player or ((abs(a-a1)==1 and abs(b-b1)==2) or (abs(a-a1)==2 and abs(b-b1)==1)):
@@ -148,20 +150,9 @@ class Attaxx:
                 print(f"{str(state[i][j]):2}", end=" ")
             print()
 
-    def get_encoded_state(self, state):
-        layer_1 = np.where(np.array(state) == -1, 1, 0).astype(np.float32) #returns same sized board replacing all -1 with 1 and all other positions with 0
-        layer_2 = np.where(np.array(state) == 0, 1, 0).astype(np.float32) #same logic for each possible number in position (-1, 1, or 0)
-        layer_3 = np.where(np.array(state) == 1, 1, 0).astype(np.float32)
-        
-        result = np.stack([layer_1, layer_2, layer_3]).astype(np.float32) #encoded state
-        
-        return result
-
-    def get_opponent(self, player):
-        return -player
-
-    def get_opponent_value(self, value):
-        return -value
 
     def change_perspective(self, state, player):
         return state * player 
+    
+
+
