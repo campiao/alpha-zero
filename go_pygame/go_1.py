@@ -12,14 +12,19 @@ class Go():
     def __init__(self, small_board=True):
         self.row_count = 7 if small_board else 9
         self.column_count = 7 if small_board else 9
+        self.board_size = 7 if small_board else 9
         self.komi = 6.5
         self.action_size = self.row_count * self.column_count + 1
         self.liberties = []
         self.block = []
         self.seki_count = 0
         self.seki_liberties = []
-        self.state_history = []
+        self.state_history = [self.get_initial_state()]
 
+    def make_move(self, action, player):
+        state = self.get_current_state()
+        new_state = self.get_next_state(state, action, player)
+        self.state_history.append(new_state)
 
     def get_initial_state(self):
         board = np.zeros((self.row_count, self.column_count))
@@ -74,12 +79,11 @@ class Go():
         return state
 
     # restore board after counting stones and liberties
+
+    def get_current_state(self):
+        return self.state_history[-1]
     def restore_board(self, state: list) -> list:
 
-
-        # unmark stones
-        # print("Restore Board")
-        # print(state)
         for y in range(len(state)):
             for x in range(len(state)):
                 # restore piece
@@ -159,40 +163,31 @@ class Go():
         return state
 
     def get_next_state(self, state, action, player):
-
-        if action == self.row_count * self.column_count:
+        if not isinstance(action, tuple):
+            # Se action não for uma tupla, trata como um índice especial
             return state
 
-        a = action // self.row_count
-        b = action % self.column_count
+        if len(action) != 2:
+            # Se a tupla não tiver exatamente dois elementos, trata como um índice especial
+            return state
+
+        a, b = action  # Desempacota a tupla para obter as coordenadas
 
         state_copy = np.copy(state)
-        state = self.set_stone(a, b, state, player)
+        state[a][b] = player
         state = self.captures(state, -player, a, b)[1]
 
-        #if any(np.array_equal(state_copy, old_state) for old_state in self.state_history):
-            #print("Illegal move: playing in a position where a piece has been previously captured.")
-            #return state
+        self.state_history.append(np.copy(state_copy))
 
-        self.state_history.append((np.copy(state_copy)))
         return state
 
     def is_valid_move(self, state: list, action: tuple, player: int) -> bool:
-        '''
-        # Description:
-        Checks if a move is valid.
-        If a move repeats a previous state or commits suicide (gets captured without capturing back), it is not valid.
 
-        A print will follow explaining the invalid move in case it exists.
-
-        # Returns:
-        A boolean confirming the validity of the move.
-        '''
 
         a = action[0]
         b = action[1]
 
-        # print(f"{a} , {b}")
+
 
         statecopy = np.copy(state).astype(np.int8)
 

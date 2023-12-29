@@ -1,17 +1,14 @@
+# run.py
+
 from go_1 import Go
 
-def main():
-    small_board = input("De input de 0 (9x9) ou 1 (7x7): ")
-    small_board = int(small_board) == 1
-
-    game = Go(small_board=small_board)
+def play_go(board_size, player):
+    game = Go(small_board=board_size == 1)
     state = game.get_initial_state()
     game.print_board(state)
 
-    player = 1
-
     while True:
-        a, b = tuple(int(x.strip()) for x in input("\nInput your move: ").split(' '))
+        a, b = tuple(int(x.strip()) for x in input("\nInput your move (row col): ").split())
         print("\n")
 
         # Adiciona a verificação de jogada válida
@@ -20,7 +17,7 @@ def main():
             continue  # Pula para a próxima iteração do loop
 
         action = a * game.row_count + b
-        state = game.get_next_state(state, action, player)
+        state = game.get_next_state(state, (a, b), player)
 
         winner, win = game.get_value_and_terminated(state, action)
         if win:
@@ -32,4 +29,8 @@ def main():
         game.print_board(state)
 
 if __name__ == "__main__":
-    main()
+    small_board = input("De input de 0 (9x9) ou 1 (7x7): ")
+    small_board = int(small_board) == 1
+
+    play_go(small_board, 1)  # Chamada da função com parâmetros adequados
+

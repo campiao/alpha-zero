@@ -7,7 +7,6 @@ from torch.optim import Adam
 import numpy as np
 from alphazero import ResNet
 from alphazero import AlphaZero
-from alphazero import MCTS
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 torch.manual_seed(0)
