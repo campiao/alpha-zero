@@ -269,7 +269,7 @@ def menu_go():
 def game_over(game,winner,pontuacao1, pontuacao2):
 
   PLAY_BACK = Button(image=None, pos=(1175,685), 
-                        text_input="MAIN MENU", font=get_font(20), base_color="White", hovering_color="Red")
+                        text_input="MAIN MENU", font=get_font(20), base_color="Red", hovering_color="White")
   
   buttons = [PLAY_BACK]
   
