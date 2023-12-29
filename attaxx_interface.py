@@ -1,88 +1,108 @@
-import torch
-from torch.optim import Adam
-import random
-import numpy as np
+import pygame
+from pygame.locals import QUIT
+import sys
 from attaxx.attaxx import Attaxx
+pygame.init()
 
-from alphazero import ResNet
-from alphazero import AlphaZero
-from alphazero import MCTS
+SCREEN = pygame.display.set_mode((1280, 720))
+pygame.display.set_caption("Menu")
 
-import os
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
 
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
-torch.manual_seed(0)
-random.seed(0)
-np.random.seed(0)
+BLUE = (0, 0, 255)
+LIGHT_BLUE = (135, 206, 250)
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(device)
+RED = (255, 0, 0)
+LIGHT_RED = (255, 10, 90)
+LIGHTER_RED = (255, 95, 95)
+GRAY = (169, 169, 169) 
+YELLOW = (249, 166, 3)
+LIGHT_YELLOW = (255, 255, 0)
+LIGHTER_YELLOW = (241, 235, 156)
 
-SAVE_NAME = None
-
-
-SAVE_NAME = input("Alias of the model: ")
-MODEL = input("Model name: ")
-OPT = input("Optimizer name: ")
-
-TEST = input("Test:\nTrue will play against the model, False will train the model (True/False):\n")
-args = {
-'game': 'Attaxx',
-'num_iterations': 8,              # number of highest level iterations
-'num_selfPlay_iterations': 400,   # number of self-play games to play within each iteration
-'num_mcts_searches': 60,          # number of mcts simulations when selecting a move within self-play
-'num_epochs': 4,                  # number of epochs for training on self-play data for each iteration
-'batch_size': 40,                 # batch size for training
-'temperature': 1.25,              # temperature for the softmax selection of moves
-'C': 2,                           # the value of the constant policy
-'augment': False,                 # whether to augment the training data with flipped states
-'dirichlet_alpha': 0.3,           # the value of the dirichlet noise
-'dirichlet_epsilon': 0.125,       # the value of the dirichlet noise
-'alias': ('Attaxx' + SAVE_NAME)
-}
-
-game = Attaxx((4,4))
-model = ResNet(game, 9, 3, device)
-optimizer = Adam(model.parameters(), lr=0.001, weight_decay=0.0001)
+# Load the background image
+BG = pygame.image.load("images/blue_background.jpg")
 
 
-model.load_state_dict(torch.load(f'AlphaZero/Models/{GAME+SAVE_NAME}/{MODEL}.pt', map_location=device))
-optimizer.load_state_dict(torch.load(f'AlphaZero/Models/{GAME+SAVE_NAME}/{OPT}.pt', map_location=device))
+def draw_board(game):
+    board_size = len(game)
+    square_size = 100
 
-if not TEST:
-os.makedirs(f'AlphaZero/Models/{GAME+SAVE_NAME}', exist_ok=True)
-alphaZero = AlphaZero(model, optimizer, game, args)
-alphaZero.learn()
-else
-game = Attaxx((4,4))
+    offset_x = (1280 - board_size * square_size) // 2
+    offset_y = (720 - board_size * square_size) // 2
 
-mcts = MCTS(model, game, args)
-state = game.get_initial_state()
-game.print_board(state)
+    for row in range(board_size):
+        for col in range(board_size):
+            x = col * square_size + offset_x
+            y = row * square_size + offset_y
 
-player = 1
+            pygame.draw.rect(SCREEN, GRAY, (x, y, square_size, square_size), border_radius=5)
 
-while True:
-    if player == 1:
-        move=[0,0,0,0]
-        # input do player
-        move[0], move[1], move[2], move[3]= tuple(int(x.strip()) for x in input("\nInput your move: ").split(' '))
-        action =  move[3] + move[2]*4 + move[1]*4**2 + move[0]*4**3
-        state = game.get_next_state(state, action, player)
-    else:
-        neut = game.change_perspective(state, player)
+            if game[row][col] == 1:
+                pygame.draw.circle(SCREEN, BLACK, (x + square_size // 2, y + square_size // 2), square_size // 2 - 10)
+            elif game[row][col] == -1:
+                pygame.draw.circle(SCREEN, WHITE, (x + square_size // 2, y + square_size // 2), square_size // 2 - 10)
 
-        action = mcts.search(neut, player)
 
-        action = np.argmax(action)
+def get_font(size): # Returns Press-Start-2P in the desired size
+  return pygame.font.Font("images/font.ttf", size) 
 
-        state = game.get_next_state(state, action, player)
 
-    winner, win = game.get_value_and_terminated(state, action)
-    if win:
-        game.print_board(state)
-        print(f"player {winner} wins")
-        exit()
+def play_attaxx(size):
+    offset_x = (1280 - 4 * 100) // 2
+    offset_y = (720 - 4 * 100) // 2
+    pygame.display.set_caption("Menu")
+    game=Attaxx([4,4])
+    player=1
+    flag=0
+    selected_piece = None
+    valid_moves = []
+    state=game.get_initial_state()
+    while True: # Draw the background image
+        SCREEN.blit(BG,(0,0))
+        Ataxx_MENU_TEXT = get_font(50).render("ATAXX", True, "#d7fcd4")
+        Ataxx_MENU_RECT = Ataxx_MENU_TEXT.get_rect(center=(180,100))
+        SCREEN.blit(Ataxx_MENU_TEXT, Ataxx_MENU_RECT)
+        draw_board(state)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+        
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                col = (mouse_pos[0] - ((1280 - 400) // 2)) // 100 
+                row = (mouse_pos[1] - ((720 - 400) // 2)) // 100 
+                if selected_piece is None and state[row][col] == player:
+                    # If no piece is selected and the clicked piece belongs to the current player
+                    selected_piece = (row, col)
+                    valid_moves = game.get_valid_moves(state,player)
+                    if flag==0:   # como para fazer um movimento precisamos de ter a posição inicial e a posição para onde queremos ir temos de guardar essas posições
+                        flag=1
+                        row1=row
+                        col1=col
+                elif selected_piece:
+                    # If a piece is selected and the clicked position is a valid move
+                    move = (row1,col1, row, col)
+                    action = move[3] + move[2] * 4 + move[1] * 4 ** 2 + move[0] * 4 ** 3
+                    game.get_next_state(state,action, player)
+                    player = -player  # Switch player after a move
+                    selected_piece = None
+                    valid_moves = []
+                    flag=0
+        # if selected_piece:
+        #     x, y = selected_piece
+        #     x = col * 100 + offset_x
+        #     y = row * 100 + offset_y
+        #     pygame.draw.rect(SCREEN, LIGHT_YELLOW, (x, y, 100, 100), border_radius=5)
+        # # Destacar movimentos válidos
+        # for move in valid_moves:
+        #     m=game.int_to_move(move)
+        #     pygame.draw.rect(SCREEN, YELLOW, ((m[0] - 1) * 100, (m[1] - 1) * 100, 100, 100), border_radius=5)            
+        #     print("desenhei")
+        pygame.display.update()
 
-    player = - player
-    game.print_board(state)
+if __name__ == "__main__":
+    play_attaxx(4)

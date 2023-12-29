@@ -83,7 +83,7 @@ class Attaxx:
             possible_moves_to_int.append(self.move_to_int(move))
         binary_representation = [1 if i in possible_moves_to_int else 0 for i in range(self.action_size)]
 
-        return binary_representation
+        return possible_moves_to_int
 
     def get_moves_at_point(self, state, player, a, b):
         moves_at_point = []
