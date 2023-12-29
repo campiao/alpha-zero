@@ -14,6 +14,48 @@ def get_font(size): # Returns Press-Start-2P in the desired size
   return pygame.font.Font("images/font.ttf", size)
 
 def menu_ataxx():
+
+  ataxxSizeBoard = 5
+  ataxxPlayer = "human"
+
+  SIZE4X4_BUTTON = Button(image=pygame.image.load("images/Play Rect.png"), pos=(240, 250), 
+                      text_input="4 X 4", font=get_font(30), base_color="#b68f40", hovering_color="White")
+  
+  SIZE4X4_BUTTON_SELECTED = Button(image=pygame.image.load("images/Play Rect.png"), pos=(240, 250), 
+                      text_input="4 X 4", font=get_font(30), base_color="Green", hovering_color="Green")
+  
+  SIZE5X5_BUTTON = Button(image=pygame.image.load("images/Play Rect.png"), pos=(640, 250), 
+                      text_input="5 X 5", font=get_font(30), base_color="#b68f40", hovering_color="White")
+  
+  SIZE5X5_BUTTON_SELECTED = Button(image=pygame.image.load("images/Play Rect.png"), pos=(640, 250), 
+                      text_input="5 X 5", font=get_font(30), base_color="Green", hovering_color="Green")
+  
+  SIZE6X6_BUTTON = Button(image=pygame.image.load("images/Play Rect.png"), pos=(1030, 250), 
+                      text_input="6 X 6", font=get_font(30), base_color="#b68f40", hovering_color="White")
+  
+  SIZE6X6_BUTTON_SELECTED = Button(image=pygame.image.load("images/Play Rect.png"), pos=(1030, 250), 
+                      text_input="6 X 6", font=get_font(30), base_color="Green", hovering_color="Green")
+  
+  HUMAN_BUTTON = Button(image=pygame.image.load("images/Play Rect.png"), pos=(440, 450), 
+                      text_input="HUMAN", font=get_font(30), base_color="#b68f40", hovering_color="White")
+
+  HUMAN_BUTTON_SELECTED = Button(image=pygame.image.load("images/Play Rect.png"), pos=(440, 450), 
+                      text_input="HUMAN", font=get_font(30), base_color="Green", hovering_color="Green")
+  
+  ALPHAZERO_BUTTON = Button(image=pygame.image.load("images/Play Rect.png"), pos=(840, 450), 
+                      text_input="ALPHAZERO", font=get_font(30), base_color="#b68f40", hovering_color="White")
+  
+  ALPHAZERO_BUTTON_SELECTED = Button(image=pygame.image.load("images/Play Rect.png"), pos=(840, 450), 
+                      text_input="ALPHAZERO", font=get_font(30), base_color="Green", hovering_color="Green")
+  
+  PLAY_BUTTON = Button(image=None, pos=(640, 630), 
+                      text_input="PLAY", font=get_font(60), base_color="Green", hovering_color="White")
+  
+  PLAY_BACK = Button(image=None, pos=(1175,685), 
+                      text_input="BACK", font=get_font(20), base_color="White", hovering_color="Red")
+  
+  buttons=[SIZE4X4_BUTTON, SIZE5X5_BUTTON, SIZE6X6_BUTTON, HUMAN_BUTTON,ALPHAZERO_BUTTON,PLAY_BACK,PLAY_BUTTON]
+
   while True:
         ATAXX_MENU_MOUSE_POS = pygame.mouse.get_pos()
 
@@ -22,29 +64,8 @@ def menu_ataxx():
         Ataxx_MENU_TEXT = get_font(50).render("ATAXX", True, "#d7fcd4")
         Ataxx_MENU_RECT = Ataxx_MENU_TEXT.get_rect(center=(640,100))
         SCREEN.blit(Ataxx_MENU_TEXT, Ataxx_MENU_RECT)
-
-        SIZE4X4_BUTTON = Button(image=pygame.image.load("images/Play Rect.png"), pos=(240, 250), 
-                            text_input="4 X 4", font=get_font(30), base_color="#b68f40", hovering_color="White")
         
-        SIZE5X5_BUTTON = Button(image=pygame.image.load("images/Play Rect.png"), pos=(640, 250), 
-                            text_input="5 X 5", font=get_font(30), base_color="#b68f40", hovering_color="White")
-        
-        SIZE6X6_BUTTON = Button(image=pygame.image.load("images/Play Rect.png"), pos=(1030, 250), 
-                            text_input="6 X 6", font=get_font(30), base_color="#b68f40", hovering_color="White")
-        
-        HUMAN_BUTTON = Button(image=pygame.image.load("images/Play Rect.png"), pos=(440, 450), 
-                            text_input="HUMAN", font=get_font(30), base_color="#b68f40", hovering_color="White")
-        
-        ALPHAZERO_BUTTON = Button(image=pygame.image.load("images/Play Rect.png"), pos=(840, 450), 
-                            text_input="ALPHAZERO", font=get_font(30), base_color="#b68f40", hovering_color="White")
-        
-        PLAY_BUTTON = Button(image=None, pos=(640, 630), 
-                            text_input="PLAY", font=get_font(60), base_color="Green", hovering_color="White")
-        
-        PLAY_BACK = Button(image=None, pos=(1175,685), 
-                            text_input="BACK", font=get_font(20), base_color="White", hovering_color="Red")
-        
-        for button in [HUMAN_BUTTON, ALPHAZERO_BUTTON, SIZE4X4_BUTTON, SIZE5X5_BUTTON, SIZE6X6_BUTTON,PLAY_BUTTON, PLAY_BACK]:
+        for button in buttons:
             button.changeColor(ATAXX_MENU_MOUSE_POS)
             button.update(SCREEN)
 
@@ -52,7 +73,87 @@ def menu_ataxx():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
             if event.type == pygame.MOUSEBUTTONDOWN:
+                
+                if SIZE4X4_BUTTON.checkForInput(ATAXX_MENU_MOUSE_POS):
+                  if SIZE4X4_BUTTON in buttons :
+                    buttons.remove(SIZE4X4_BUTTON)
+                    buttons.append(SIZE4X4_BUTTON_SELECTED)
+
+                  if SIZE5X5_BUTTON_SELECTED in buttons:
+                      buttons.remove(SIZE5X5_BUTTON_SELECTED)
+                      buttons.append(SIZE4X4_BUTTON_SELECTED)
+                      buttons.append(SIZE5X5_BUTTON)
+
+                  if SIZE6X6_BUTTON_SELECTED in buttons:
+                      buttons.remove(SIZE6X6_BUTTON_SELECTED)
+                      buttons.append(SIZE4X4_BUTTON_SELECTED)
+                      buttons.append(SIZE6X6_BUTTON)
+
+                  ataxxSizeBoard = 4
+
+                if SIZE5X5_BUTTON.checkForInput(ATAXX_MENU_MOUSE_POS):
+                  if SIZE5X5_BUTTON in buttons :
+                    buttons.remove(SIZE5X5_BUTTON)
+                    buttons.append(SIZE5X5_BUTTON_SELECTED)
+
+                  if SIZE4X4_BUTTON_SELECTED in buttons:
+                      buttons.remove(SIZE4X4_BUTTON_SELECTED)
+                      buttons.append(SIZE5X5_BUTTON_SELECTED)
+                      buttons.append(SIZE4X4_BUTTON)
+
+                  if SIZE6X6_BUTTON_SELECTED in buttons:
+                      buttons.remove(SIZE6X6_BUTTON_SELECTED)
+                      buttons.append(SIZE5X5_BUTTON_SELECTED)
+                      buttons.append(SIZE6X6_BUTTON)
+
+                  goSizeBoard = 5
+
+                if SIZE6X6_BUTTON.checkForInput(ATAXX_MENU_MOUSE_POS):
+                    if SIZE6X6_BUTTON in buttons :
+                      buttons.remove(SIZE6X6_BUTTON)
+                      buttons.append(SIZE6X6_BUTTON_SELECTED)
+
+                    if SIZE4X4_BUTTON_SELECTED in buttons:
+                        buttons.remove(SIZE4X4_BUTTON_SELECTED)
+                        buttons.append(SIZE6X6_BUTTON_SELECTED)
+                        buttons.append(SIZE4X4_BUTTON)
+
+                    if SIZE5X5_BUTTON_SELECTED in buttons:
+                        buttons.remove(SIZE5X5_BUTTON_SELECTED)
+                        buttons.append(SIZE6X6_BUTTON_SELECTED)
+                        buttons.append(SIZE5X5_BUTTON)
+
+                    goSizeBoard = 6                  
+
+                if HUMAN_BUTTON.checkForInput(ATAXX_MENU_MOUSE_POS):
+                  if HUMAN_BUTTON in buttons :
+                    buttons.remove(HUMAN_BUTTON)
+                    buttons.append(HUMAN_BUTTON_SELECTED)
+
+                  if ALPHAZERO_BUTTON_SELECTED in buttons:
+                      buttons.remove(ALPHAZERO_BUTTON_SELECTED)
+                      buttons.append(HUMAN_BUTTON_SELECTED)
+                      buttons.append(ALPHAZERO_BUTTON)
+                  player = "human"
+
+                if ALPHAZERO_BUTTON.checkForInput(ATAXX_MENU_MOUSE_POS):
+                  if ALPHAZERO_BUTTON in buttons :
+                    buttons.remove(ALPHAZERO_BUTTON)
+                    buttons.append(ALPHAZERO_BUTTON_SELECTED)
+
+                  if HUMAN_BUTTON_SELECTED in buttons:
+                      buttons.remove(HUMAN_BUTTON_SELECTED)
+                      buttons.append(ALPHAZERO_BUTTON_SELECTED)
+                      buttons.append(HUMAN_BUTTON)
+
+                  player = "alphazero"
+
+                if PLAY_BUTTON.checkForInput(ATAXX_MENU_MOUSE_POS):
+                  #jogar(ATAXX,goSizeBoard, player)
+                  game_over("ATAXX", "HUMAN", 120, 0)
+
                 if PLAY_BACK.checkForInput(ATAXX_MENU_MOUSE_POS):
                     main_menu()
 
@@ -158,24 +259,57 @@ def menu_go():
 
               if PLAY_BUTTON.checkForInput(GO_MENU_MOUSE_POS):
                   #jogar(go,goSizeBoard, player)
-                  game_over("go")
+                  game_over("GO", "HUMAN", 120, 0)
               if PLAY_BACK.checkForInput(GO_MENU_MOUSE_POS):
                   main_menu()
 
           pygame.display.update()
 
-#  def game_over(jogo):
 
-#     GO_MENU_MOUSE_POS = pygame.mouse.get_pos()
+def game_over(game,winner,pontuacao1, pontuacao2):
 
-#     SCREEN.blit(BG,(0,0))
+  PLAY_BACK = Button(image=None, pos=(1175,685), 
+                        text_input="MAIN MENU", font=get_font(20), base_color="White", hovering_color="Red")
+  
+  buttons = [PLAY_BACK]
+  
+  while True:
 
-#     game_over_TEXT = get_font(50).render(jogo, True, "#d7fcd4")
-#     game_over_RECT = Go_MENU_TEXT.get_rect(center=(640,100))
+    GAME_OVER_MOUSE_POS = pygame.mouse.get_pos()
 
-#     Go_MENU_TEXT = get_font(50).render("GO", True, "#d7fcd4")
-#     Go_MENU_RECT = Go_MENU_TEXT.get_rect(center=(640,100))
-#     SCREEN.blit(game_over_TEXT, game_over_RECT)
+    SCREEN.blit(BG,(0,0))
+
+    # GAME_OVER_TEXT = get_font(50).render(game, True, "#d7fcd4")
+    # GAME_OVER_RECT = GAME_OVER_TEXT.get_rect(center=(640,100))
+
+    WINNER_TITLE_TEXT = get_font(50).render("WINNER: ", True, "#b68f40")
+    WINNER_TITLE_RECT = WINNER_TITLE_TEXT.get_rect(center=(660,150))
+
+    WINNER_TEXT= get_font(80).render(winner, True, "Green")
+    WINNER_RECT = WINNER_TEXT.get_rect(center=(640,350))
+
+    PONTUACAO_TEXT = get_font(30).render(f"{pontuacao1} - {pontuacao2}", True, "White")
+    PONTUACAO_RECT = PONTUACAO_TEXT.get_rect(center=(640,500))
+
+    # SCREEN.blit(GAME_OVER_TEXT, GAME_OVER_RECT)
+    SCREEN.blit(WINNER_TITLE_TEXT, WINNER_TITLE_RECT)
+    SCREEN.blit(WINNER_TEXT, WINNER_RECT)
+    SCREEN.blit(PONTUACAO_TEXT, PONTUACAO_RECT)
+
+    for button in buttons:
+            button.changeColor(GAME_OVER_MOUSE_POS)
+            button.update(SCREEN)
+
+    for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+              if PLAY_BACK.checkForInput(GAME_OVER_MOUSE_POS):
+                  main_menu()
+
+            pygame.display.update()
+
 
 def main_menu():
   pygame.display.set_caption("Menu")
