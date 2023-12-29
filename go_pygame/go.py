@@ -22,14 +22,7 @@ DOT_RADIUS = 4
 
 
 def make_grid(size):
-    """Return list of (start_point, end_point pairs) defining gridlines
 
-    Args:
-        size (int): size of grid
-
-    Returns:
-        Tuple[List[Tuple[float, float]]]: start and end points for gridlines
-    """
     start_points, end_points = [], []
 
     # vertical start points (constant y)
@@ -56,16 +49,7 @@ def make_grid(size):
 
 
 def xy_to_colrow(x, y, size):
-    """Convert x,y coordinates to column and row number
 
-    Args:
-        x (float): x position
-        y (float): y position
-        size (int): size of grid
-
-    Returns:
-        Tuple[int, int]: column and row numbers of intersection
-    """
     inc = (BOARD_WIDTH - 2 * BOARD_BORDER) / (size - 1)
     x_dist = x - BOARD_BORDER
     y_dist = y - BOARD_BORDER
