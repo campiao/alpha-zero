@@ -137,10 +137,10 @@ if __name__ == '__main__':
 
             while True:
                 if player == 1:
-                    
+                    move=[0,0,0,0]
                     # input do player
-                    action = int(input("Input player 1 move: "))
-
+                    move[0], move[1], move[2], move[3]= tuple(int(x.strip()) for x in input("\nInput your move: ").split(' '))
+                    action =  move[3] + move[2]*4 + move[1]*4**2 + move[0]*4**3
                     state = game.get_next_state(state, action, player)
                 else:
                     neut = game.change_perspective(state, player)
