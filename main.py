@@ -3,7 +3,7 @@ from torch.optim import Adam
 import random
 import numpy as np
 from go_pygame import go_1
-from attaxx.attaxx import GameState as Attaxx
+from attaxx import Attaxx
 
 from alphazero import ResNet
 from alphazero import AlphaZero
@@ -95,7 +95,7 @@ if __name__ == '__main__':
             print("No model to test")
             exit()
         if GAME == 'Go':
-            game = Go()
+            game = go_1.Go()
 
             model.load_state_dict(torch.load(f'AlphaZero/Models/{GAME+SAVE_NAME}/{MODEL}.pt'))
             mcts = MCTS(model, game, args)
@@ -108,7 +108,7 @@ if __name__ == '__main__':
                 if player == 1:
                     a, b = tuple(int(x.strip()) for x in input("\nInput your move: ").split(' '))
                     print("\n")
-                    action = a * 9 + b
+                    action = a * game.row_count + b
                     state = game.get_next_state(state, action, player)
                 else:
                     neut = game.change_perspective(state, player)
