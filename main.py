@@ -2,8 +2,8 @@ import torch
 from torch.optim import Adam
 import random
 import numpy as np
-from go_pygame import go_1
-from attaxx import Attaxx
+from go_pygame.go_1 import Go
+from attaxx.attaxx import Attaxx
 
 from alphazero import ResNet
 from alphazero import AlphaZero
@@ -58,7 +58,7 @@ if __name__ == '__main__':
             'alias': ('Go' + SAVE_NAME)
         }
 
-        game = go_1.Go()
+        game = Go()
         model = ResNet(game, 9, 3, device)
         optimizer = Adam(model.parameters(), lr=0.001, weight_decay=0.0001)
 
@@ -78,8 +78,8 @@ if __name__ == '__main__':
             'alias': ('Attaxx' + SAVE_NAME)
         }
          
-        game = Attaxx()
-        model = ResNet(game, 9, 128, device)
+        game = Attaxx((4,4))
+        model = ResNet(game, 9, 3, device)
         optimizer = Adam(model.parameters(), lr=0.001, weight_decay=0.0001)
 
     if LOAD:
@@ -95,7 +95,7 @@ if __name__ == '__main__':
             print("No model to test")
             exit()
         if GAME == 'Go':
-            game = go_1.Go()
+            game = Go()
 
             model.load_state_dict(torch.load(f'AlphaZero/Models/{GAME+SAVE_NAME}/{MODEL}.pt'))
             mcts = MCTS(model, game, args)
@@ -127,11 +127,8 @@ if __name__ == '__main__':
                 game.print_board(state)
             
         elif GAME == 'Attaxx':
-            game = Attaxx()
-            name = input("Model File Name: ")
-
-            model.load_state_dict(torch.load('AlphaZero/Models/Attaxx/' + name + '.pt'))
-
+            game = Attaxx((4,4))
+           
             mcts = MCTS(model, game, args)
             state = game.get_initial_state()
             game.print_board(state)
@@ -142,6 +139,7 @@ if __name__ == '__main__':
                 if player == 1:
                     
                     # input do player
+                    action = int(input("Input player 1 move: "))
 
                     state = game.get_next_state(state, action, player)
                 else:
