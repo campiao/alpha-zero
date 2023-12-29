@@ -1,10 +1,10 @@
 # AlphaZero Game Player
 
 ### Miguel:
-- [ ] Implementar Go capaz de jogar os diferentes tamanhos da board (7x7 e 9x9) com as seguintes features
-  - [ ] Representação do game state
+- [x] Implementar Go capaz de jogar os diferentes tamanhos da board (7x7 e 9x9) com as seguintes features
+  - [x] Representação do game state
   - [ ] Determinar movimentos legais
-  - [ ] Verificar estados terminais (empate ou vitória)
+  - [x] Verificar estados terminais (empate ou vitória)
 
 Pode ser de interesse:
 

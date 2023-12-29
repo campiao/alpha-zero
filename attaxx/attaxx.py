@@ -1,10 +1,11 @@
 import numpy as np
 
+
 class Attaxx:
-    def __init__(self, args):
-        self.column_count = args[0]
-        self.row_count = args[1]
-        self.action_size = (self.column_count * self.row_count) ** 2
+    def __init__(self, args: tuple):
+        self.column_count : int = args[0]
+        self.row_count : int = args[1]
+        self.action_size : int = (self.column_count * self.row_count) ** 2
     
     def get_initial_state(self):
         state = np.zeros((self.column_count, self.row_count))
@@ -26,7 +27,8 @@ class Attaxx:
         return state
 
     def is_valid_move(self, state, action, player):
-        a, b, a1, b1 = action
+        move = self.int_to_move(action)
+        a, b, a1, b1 = move[0], move[1], move[2], move[3]
         if (a==a1 and b==b1):
             return False
         if abs(a-a1)>2 or abs(b-b1)>2 or state[a1][b1]!=0 or state[a][b]!=player or ((abs(a-a1)==1 and abs(b-b1)==2) or (abs(a-a1)==2 and abs(b-b1)==1)):
@@ -88,7 +90,8 @@ class Attaxx:
         for i in range(self.column_count):
             for j in range(self.row_count):
                 possible_action = (a, b, i, j)
-                if self.is_valid_move(state, possible_action, player):
+                tmp = self.move_to_int(possible_action)
+                if self.is_valid_move(state, tmp, player):
                     moves_at_point.append(possible_action)
         return moves_at_point 
 
@@ -126,7 +129,7 @@ class Attaxx:
         
         return 0, False
     
-    def get_value_and_terminated(self, state, action, player):
+    def get_value_and_terminated(self, state, action):
         winner, game_over = self.check_win_and_over(state, action = None)
         return winner, game_over
     
@@ -165,3 +168,21 @@ class Attaxx:
 
     def change_perspective(self, state, player):
         return state * player 
+    
+    def get_encoded_state(self, state):
+        layer_1 = np.where(np.array(state) == -1, 1, 0).astype(np.float32)
+        layer_2 = np.where(np.array(state) == 0, 1, 0).astype(np.float32)
+        layer_3 = np.where(np.array(state) == 1, 1, 0).astype(np.float32)
+
+        result = np.stack([layer_1, layer_2, layer_3]).astype(np.float32)
+
+        return result
+    
+    def get_opponent(self, player):
+        return -player
+
+    def get_opponent_value(self, value):
+        return -value
+    
+
+
