@@ -178,31 +178,41 @@ class Go():
         return state
 
     def is_valid_move(self, state: list, action: tuple, player: int) -> bool:
+        '''
+        # Description:
+        Checks if a move is valid.
+        If a move repeats a previous state or commits suicide (gets captured without capturing back), it is not valid.
+
+        A print will follow explaining the invalid move in case it exists.
+
+        # Returns:
+        A boolean confirming the validity of the move.
+        '''
+
         a = action[0]
         b = action[1]
 
-        # Verificar se a jogada está dentro dos limites do tabuleiro
-        if a < 0 or a >= self.row_count or b < 0 or b >= self.column_count or state[a][b] != self.EMPTY:
+        # print(f"{a} , {b}")
+
+        statecopy = np.copy(state).astype(np.int8)
+
+        if state[a][b] != self.EMPTY:
+            print("Space Occupied")
             return False
 
-        # Copiar o estado para evitar alterações indesejadas
-        statecopy = np.copy(state).astype(np.uint8)
-
-        # Colocar a pedra na posição desejada
         statecopy = self.set_stone(a, b, statecopy, player)
 
-        liberties, _ = self.count(b, a, statecopy, player, [], [])
-
-
-        captured_opponent, _ = self.captures(statecopy, 3 - player, a, b)
-        captured_current, _ = self.captures(statecopy, player, a, b)
-
-        # Verificar se a jogada resulta em capturas ilegais
-        if not captured_opponent and captured_current:
-            print("Capturas ilegais!")
-            return False
-
-        return True
+        if self.captures(statecopy, -player, a, b)[0] == True:
+            return True
+        else:
+            # print("no captures")
+            libs, block = self.count(b, a, statecopy, player, [], [])
+            # print(libs)
+            if len(libs) == 0:
+                print("Invalid, Suicide")
+                return False
+            else:
+                return True
 
     def get_valid_moves(self, state, player):
 
@@ -211,7 +221,7 @@ class Go():
             for b in range(0, self.row_count):
                 if self.is_valid_move(state, (a, b), player):
                     newstate[a][b] = 1
-
+#vamoi
         newstate = newstate.reshape(-1)
         newstate = np.concatenate([newstate, [1]])
         return (newstate).astype(np.uint8)
