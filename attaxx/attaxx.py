@@ -150,6 +150,20 @@ class Attaxx:
                 print(f"{str(state[i][j]):2}", end=" ")
             print()
 
+    def get_encoded_state(self, state):
+        layer_1 = np.where(np.array(state) == -1, 1, 0).astype(np.float32) #returns same sized board replacing all -1 with 1 and all other positions with 0
+        layer_2 = np.where(np.array(state) == 0, 1, 0).astype(np.float32) #same logic for each possible number in position (-1, 1, or 0)
+        layer_3 = np.where(np.array(state) == 1, 1, 0).astype(np.float32)
+        
+        result = np.stack([layer_1, layer_2, layer_3]).astype(np.float32) #encoded state
+        
+        return result
+
+    def get_opponent(self, player):
+        return -player
+
+    def get_opponent_value(self, value):
+        return -value
 
     def change_perspective(self, state, player):
         return state * player 
