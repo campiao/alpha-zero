@@ -221,7 +221,7 @@ class Go():
             for b in range(0, self.row_count):
                 if self.is_valid_move(state, (a, b), player):
                     newstate[a][b] = 1
-
+#vamoi
         newstate = newstate.reshape(-1)
         newstate = np.concatenate([newstate, [1]])
         return (newstate).astype(np.uint8)
