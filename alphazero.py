@@ -143,7 +143,7 @@ class MCTS:
             while node.is_expanded():
                 node = node.select()
                 
-            value, is_terminal = self.game.get_value_and_terminated(node.state, node.action_taken)
+            value, is_terminal = self.game.get_value_and_terminated(node.state, node.action_taken,player)
             value = self.game.get_opponent_value(value)
             
             if not is_terminal:
@@ -221,7 +221,7 @@ class AlphaZero:
             
             state = self.game.get_next_state(state, action, player)
             
-            value, is_terminal = self.game.get_value_and_terminated(state, action)
+            value, is_terminal = self.game.get_value_and_terminated(state, action,player)
             
             if is_terminal:
                 returnMemory = []
