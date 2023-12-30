@@ -1,5 +1,6 @@
 import pygame,sys
 from button import Button 
+from attaxx_interface import play_attaxx
 #from ataxx import ataxx
 
 pygame.init()
@@ -108,7 +109,7 @@ def menu_ataxx():
                       buttons.append(SIZE5X5_BUTTON_SELECTED)
                       buttons.append(SIZE6X6_BUTTON)
 
-                  goSizeBoard = 5
+                  ataxxSizeBoard = 5
 
                 if SIZE6X6_BUTTON.checkForInput(ATAXX_MENU_MOUSE_POS):
                     if SIZE6X6_BUTTON in buttons :
@@ -125,7 +126,7 @@ def menu_ataxx():
                         buttons.append(SIZE6X6_BUTTON_SELECTED)
                         buttons.append(SIZE5X5_BUTTON)
 
-                    goSizeBoard = 6                  
+                    ataxxSizeBoard = 6                  
 
                 if HUMAN_BUTTON.checkForInput(ATAXX_MENU_MOUSE_POS):
                   if HUMAN_BUTTON in buttons :
@@ -151,8 +152,13 @@ def menu_ataxx():
                   player = "alphazero"
 
                 if PLAY_BUTTON.checkForInput(ATAXX_MENU_MOUSE_POS):
-                  #jogar(ATAXX,goSizeBoard, player)
-                  game_over("ATAXX", "HUMAN", 120, 0)
+                  winner,count1,count2=play_attaxx(ataxxSizeBoard)
+                  if winner==1:
+                    win="HUMAN"
+                  elif winner==-1:
+                    win="ALPHAZERO"
+                  else: win="DRAW"
+                  game_over("ATAXX", win , count1, count2)
 
                 if PLAY_BACK.checkForInput(ATAXX_MENU_MOUSE_POS):
                     main_menu()

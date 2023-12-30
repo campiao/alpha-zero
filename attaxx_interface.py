@@ -13,15 +13,8 @@ pygame.display.set_caption("Menu")
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-BLUE = (0, 0, 255)
 LIGHT_BLUE = (135, 206, 250)
-RED = (255, 0, 0)
-LIGHT_RED = (255, 10, 90)
-LIGHTER_RED = (255, 95, 95)
 GRAY = (169, 169, 169) 
-YELLOW = (249, 166, 3)
-LIGHT_YELLOW = (255, 255, 0)
-LIGHTER_YELLOW = (241, 235, 156)
 
 # Load the background image
 BG = pygame.image.load("images/blue_background.jpg")
@@ -39,7 +32,7 @@ def draw_board(game):
             x = col * square_size + offset_x
             y = row * square_size + offset_y
 
-            pygame.draw.rect(SCREEN, GRAY, (x, y, square_size, square_size), border_radius=5)
+            pygame.draw.rect(SCREEN, GRAY, (x, y, square_size, square_size), border_radius=15)
 
             if game[row][col] == 1:
                 pygame.draw.circle(SCREEN, BLACK, (x + square_size // 2, y + square_size // 2), square_size // 2 - 10)
@@ -83,10 +76,10 @@ def play_attaxx(size):
     game=Attaxx([size,size])
     mcts=prepair_model(game)
     square_size=100
-    player=1
-    flag=0
     row1=0
     col1=0
+    flag=0
+    player=1
     selected_piece = None
     valid_moves = []
     state=game.get_initial_state()
@@ -135,7 +128,7 @@ def play_attaxx(size):
                 x = col * square_size + offset_x
                 y = row * square_size + offset_y
                 pygame.draw.circle(SCREEN, LIGHT_BLUE, (x + square_size // 2, y + square_size // 2), square_size // 2 - 10)
-            # # Destacar movimentos válidos
+            # Destacar movimentos válidos
                 for move in valid_moves:
                     x = move[3] * square_size + offset_x
                     y = move[2] * square_size + offset_y
@@ -147,9 +140,9 @@ def play_attaxx(size):
             action = np.argmax(action)
             state = game.get_next_state(state, action, player)
             player=-player  # Switch player after a move
-        winner, win = game.check_win_and_over(state, action=None)
+        winner, win,count1,count2 = game.check_win_and_over(state, action=None)
         if win:
-            print(f"player {winner} wins")
+            return winner,count1,count2
         pygame.display.update()
 
 if __name__ == "__main__":

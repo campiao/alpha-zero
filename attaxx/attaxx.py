@@ -118,22 +118,22 @@ class Attaxx:
                 elif state[i][j] == -1:
                     count_player2+=1
         if count_player1 == 0:
-            return -1, True
+            return -1, True,count_player1,count_player2
         elif count_player2 == 0:
-            return 1, True
+            return 1, True,count_player1,count_player2
         
         if self.check_board_full(state):
             if count_player1>count_player2:
-                return 1, True
+                return 1, True,count_player1,count_player2
             elif count_player2>count_player1:
-                return -1, True
+                return -1, True,count_player1,count_player2
             elif count_player1==count_player2:
-                return 2, True
+                return 2, True,count_player1,count_player2
         
-        return 0, False
+        return 0, False,count_player1,count_player2
     
     def get_value_and_terminated(self, state, action):
-        winner, game_over = self.check_win_and_over(state, action = None)
+        winner, game_over, _, _ = self.check_win_and_over(state, action = None)
         return winner, game_over
     
     def print_board(self, state):
