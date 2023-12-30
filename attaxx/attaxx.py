@@ -126,10 +126,12 @@ class Attaxx:
         elif count_player2 == 0:
             return 1, True,count_player1,count_player2
         
-        if max(player1Moves) == 0:
-            return -1, True, count_player1, count_player2
-        if max(player2Moves) == 0:
-            return 1, True, count_player1, count_player2
+
+        if not self.check_board_full(state):
+            if max(player1Moves) == 0:
+                return -1, True, count_player1, count_player2
+            if max(player2Moves) == 0:
+                return 1, True, count_player1, count_player2
         
         if self.check_board_full(state):
             if count_player1>count_player2:
