@@ -32,10 +32,7 @@ if __name__ == '__main__':
 		game_mode = Go(small_board)
 		game_name = "Go"
 	else:
-		print("Select Attaxx board size(input 1 or 2 or 3)\n\
-		\t1. 4*4\n\
-		\t2. 6*6\n\
-		\t3. flexible(5*5)")
+		print("""Select Attaxx board size(input 1 or 2 or 3)\n\t1. 4*4\n\t2. 6*6\n\t3. flexible(5*5)""")
 		board_size = int(input())
 		if board_size == 1:
 			size = (4,4)
