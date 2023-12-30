@@ -31,7 +31,7 @@ class Attaxx:
         a, b, a1, b1 = move[0], move[1], move[2], move[3]
         if (a==a1 and b==b1):
             return False
-        if abs(a-a1)>2 or abs(b-b1)>2 or state[a1][b1]!=0 or state[a][b]!=player or ((abs(a-a1)==1 and abs(b-b1)==2) or (abs(a-a1)==2 and abs(b-b1)==1)):
+        if abs(a-a1)>2 or abs(b-b1)>2 or state[a1][b1]!=0 or state[a][b]!=player :
             return False
         return True
 
@@ -70,9 +70,8 @@ class Attaxx:
     
     def get_valid_moves(self, state, player):
         possible_moves = set()
-
-        for i in range(self.column_count):
-            for j in range(self.row_count):
+        for i in range(self.row_count):
+            for j in range(self.column_count):
                 state[i][j] = int(state[i][j])
                 if state[i][j] == player:
                     moves_at_point = set(self.get_moves_at_point(state, player, i, j))
@@ -83,7 +82,11 @@ class Attaxx:
             possible_moves_to_int.append(self.move_to_int(move))
         binary_representation = [1 if i in possible_moves_to_int else 0 for i in range(self.action_size)]
 
-        return possible_moves_to_int
+        return binary_representation
+
+
+
+
 
     def get_moves_at_point(self, state, player, a, b):
         moves_at_point = []
@@ -115,22 +118,22 @@ class Attaxx:
                 elif state[i][j] == -1:
                     count_player2+=1
         if count_player1 == 0:
-            return -1, True
+            return -1, True,count_player1,count_player2
         elif count_player2 == 0:
-            return 1, True
+            return 1, True,count_player1,count_player2
         
         if self.check_board_full(state):
             if count_player1>count_player2:
-                return 1, True
+                return 1, True,count_player1,count_player2
             elif count_player2>count_player1:
-                return -1, True
+                return -1, True,count_player1,count_player2
             elif count_player1==count_player2:
-                return 2, True
+                return 2, True,count_player1,count_player2
         
-        return 0, False
+        return 0, False,count_player1,count_player2
     
     def get_value_and_terminated(self, state, action):
-        winner, game_over = self.check_win_and_over(state, action = None)
+        winner, game_over, _, _ = self.check_win_and_over(state, action = None)
         return winner, game_over
     
     def print_board(self, state):
@@ -169,20 +172,6 @@ class Attaxx:
     def change_perspective(self, state, player):
         return state * player 
     
-    def get_encoded_state(self, state):
-        layer_1 = np.where(np.array(state) == -1, 1, 0).astype(np.float32)
-        layer_2 = np.where(np.array(state) == 0, 1, 0).astype(np.float32)
-        layer_3 = np.where(np.array(state) == 1, 1, 0).astype(np.float32)
 
-        result = np.stack([layer_1, layer_2, layer_3]).astype(np.float32)
-
-        return result
-    
-    def get_opponent(self, player):
-        return -player
-
-    def get_opponent_value(self, value):
-        return -value
-    
 
 
