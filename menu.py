@@ -240,7 +240,7 @@ def menu_go():
                       buttons.remove(SIZE7X7_BUTTON_SELECTED)
                       buttons.append(SIZE9X9_BUTTON_SELECTED)
                       buttons.append(SIZE7X7_BUTTON)
-                  goSizeBoard = 7
+                  goSizeBoard = 9
 
               if HUMAN_BUTTON.checkForInput(GO_MENU_MOUSE_POS):
                   if HUMAN_BUTTON in buttons :
@@ -265,7 +265,7 @@ def menu_go():
                   player = "alphazero"
 
               if PLAY_BUTTON.checkForInput(GO_MENU_MOUSE_POS):
-                  play_go(9)
+                  play_go(goSizeBoard)
                   game_over("GO", "HUMAN", 120, 0)
               if PLAY_BACK.checkForInput(GO_MENU_MOUSE_POS):
                   main_menu()

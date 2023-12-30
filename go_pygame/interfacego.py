@@ -8,12 +8,11 @@ import numpy as np
 from go_pygame.go_1 import Go
 from alphazero import ResNet
 from alphazero import MCTS
-
+from button import Button
 import os
-pygame.init()
+
 
 # Define as dimensões da janela
-SCREEN_WIDTH, SCREEN_HEIGHT = 800, 800
 
 # Define o tamanho do grid e do tabuleiro
 GRID_SIZE = 75  # Ajuste conforme necessário
@@ -83,6 +82,8 @@ def prepair_model(game):
     return mcts
 
 
+
+
 def play_go(board_size):
     go_game = Go(board_size)
     player = 1
@@ -96,8 +97,11 @@ def play_go(board_size):
         Ataxx_MENU_TEXT = get_font(50).render("GO", True, "#d7fcd4")
         Ataxx_MENU_RECT = Ataxx_MENU_TEXT.get_rect(center=(180,100))
         SCREEN.blit(Ataxx_MENU_TEXT, Ataxx_MENU_RECT)
+        PASS = Button(image=None, pos=(1100,250), text_input="PASS", font=get_font(30), base_color="#b68f40", hovering_color="White")
+        PASS_POS = pygame.mouse.get_pos()
+        PASS.changeColor(PASS_POS)
+        PASS.update(SCREEN)
         draw_board(state)
-        print(state)
         if player==1:
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -105,27 +109,36 @@ def play_go(board_size):
                     sys.exit()
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    mouse_pos = pygame.mouse.get_pos()
-                    col = (mouse_pos[0] - ((1280 - 400) // 2)) // 75 +margin
-                    row = (mouse_pos[1] - ((720 - 400) // 2)) // 75 +margin
-
-                    print(col, row)
-                    if  row >=0 and col >=0  and row < board_size and col < board_size:
-                        action=col + row * board_size
-                        if   go_game.is_valid_move(state, action, player):
-                            state=go_game.get_next_state(state,action, player)
-                            player = -player  # Switch player after a move
-                            draw_board(state)
-                            print(state)
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
+                    if PASS.checkForInput(PASS_POS):
                         player = -player
+                    else:
+                        mouse_pos = pygame.mouse.get_pos()
+                        col = (mouse_pos[0] - ((1280 - 400) // 2)) // 75 +margin
+                        row = (mouse_pos[1] - ((720 - 400) // 2)) // 75 +margin
+
+                        print(col, row)
+                        if  row >=0 and col >=0  and row < board_size and col < board_size:
+                            action=col + row * board_size
+                            if   go_game.is_valid_move(state, action, player):
+                                state=go_game.get_next_state(state,action, player)
+                                player = -player  # Switch player after a move
+                                draw_board(state)
+                                print(state)
         else:
             time.sleep(1)
             neut = go_game.change_perspective(state, -player)
             action = mcts.search(neut, player)
             action = np.argmax(action)
-            state = go_game.get_next_state(state, action, player)
+            print(action)
+            if action == board_size*board_size:
+                print("pasou")
+                pass_text = get_font(20).render("O modelo passou", True, "#ffffff")
+                pass_rect = pass_text.get_rect(center=(1105, 400))
+                SCREEN.blit(pass_text, pass_rect)
+                pygame.display.update()
+                pygame.time.wait(2000)
+            else:
+                state = go_game.get_next_state(state, action, player)
             player = -player
         winner, win = go_game.get_value_and_terminated(state, action,player)
         if win:
