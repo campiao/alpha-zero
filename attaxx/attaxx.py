@@ -141,7 +141,7 @@ class Attaxx:
         
         return 0, False,count_player1,count_player2
     
-    def get_value_and_terminated(self, state, action):
+    def get_value_and_terminated(self, state, action,player):
         winner, game_over, _, _ = self.check_win_and_over(state, action = None)
         return winner, game_over
     

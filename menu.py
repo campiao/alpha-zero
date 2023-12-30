@@ -1,6 +1,7 @@
 import pygame,sys
 from button import Button 
 from attaxx_interface import play_attaxx
+from go_pygame.interfacego import play_go
 #from ataxx import ataxx
 
 pygame.init()
@@ -264,7 +265,7 @@ def menu_go():
                   player = "alphazero"
 
               if PLAY_BUTTON.checkForInput(GO_MENU_MOUSE_POS):
-                  #jogar(go,goSizeBoard, player)
+                  play_go(9)
                   game_over("GO", "HUMAN", 120, 0)
               if PLAY_BACK.checkForInput(GO_MENU_MOUSE_POS):
                   main_menu()
