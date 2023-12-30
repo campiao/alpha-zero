@@ -186,9 +186,6 @@ class Go():
 
         a = action[0]
         b = action[1]
-
-
-
         statecopy = np.copy(state).astype(np.int8)
 
         if state[a][b] != self.EMPTY:

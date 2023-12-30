@@ -7,6 +7,7 @@ pygame.init()
 from alphazero import MCTS
 import torch
 from alphazero import ResNet
+import time
 
 SCREEN = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("Menu")
@@ -62,7 +63,7 @@ def prepair_model(game):
         }
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = ResNet(game, 9, 3, device)
-    model.load_state_dict(torch.load(f'AlphaZero/Models/Attaxx_TestModel/model_4.pt', map_location=device))
+    model.load_state_dict(torch.load(f'AlphaZero/Models/Attaxx_NoCrash/model_9.pt', map_location=device))
     #optimizer.load_state_dict(torch.load(f'AlphaZero/Models/Attax_TestModel/optimizer_4.pt', map_location=device))
     mcts = MCTS(model, game, args)
     return mcts
@@ -135,6 +136,7 @@ def play_attaxx(size):
                     pygame.draw.circle(SCREEN, LIGHT_BLUE, (x + square_size // 2, y + square_size // 2), square_size // 2 - 10)        
         elif player==-1:
             print("maquina")
+            time.sleep(1)
             neut = game.change_perspective(state, -player)
             action = mcts.search(neut, player)
             action = np.argmax(action)
