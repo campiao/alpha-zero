@@ -119,7 +119,7 @@ def play_go(board_size):
                         print(col, row)
                         if  row >=0 and col >=0  and row < board_size and col < board_size:
                             action=col + row * board_size
-                            if   go_game.is_valid_move(state, action, player):
+                            if   go_game.is_valid_move(state, (row,col), player):
                                 state=go_game.get_next_state(state,action, player)
                                 player = -player  # Switch player after a move
                                 draw_board(state)

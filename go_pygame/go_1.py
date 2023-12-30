@@ -188,6 +188,10 @@ class Go():
         b = action[1]
         statecopy = np.copy(state).astype(np.int8)
 
+        if len(self.state_history) > 1:
+            if np.array_equal(state, self.state_history[-2]):
+                return False
+
         if state[a][b] != self.EMPTY:
             print("Space Occupied")
             return False
