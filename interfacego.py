@@ -28,7 +28,7 @@ GRAY = (169, 169, 169)
 STONE_RADIUS = GRID_SIZE // 2 - 5
 BLACK_STONE_COLOR = (0, 0, 0)
 WHITE_STONE_COLOR = (255, 255, 255)
-BG = pygame.image.load("images/blue_background.jpg")
+BG = pygame.image.load("go_pygame/images/blue_background.jpg")
 
 
 

@@ -1,7 +1,7 @@
 import pygame,sys
 from button import Button 
 from attaxx_interface import play_attaxx
-from go_pygame.interfacego import play_go
+from interfacego import play_go
 #from ataxx import ataxx
 
 pygame.init()
