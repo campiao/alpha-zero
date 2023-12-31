@@ -46,11 +46,11 @@ if __name__ == '__main__':
 	model_name = input("Alias of the new model: ")
 	args = {
             'game': game_name,
-            'num_iterations': 10,             # number of highest level iterations
-            'num_selfPlay_iterations': 10,   # number of self-play games to play within each iteration
-            'num_mcts_searches': 100,         # number of mcts simulations when selecting a move within self-play
-            'num_epochs': 25,                  # number of epochs for training on self-play data for each iteration
-            'batch_size': 8,                # batch size for training
+            'num_iterations': 25,             # number of highest level iterations
+            'num_selfPlay_iterations': 50,   # number of self-play games to play within each iteration
+            'num_mcts_searches': 25,         # number of mcts simulations when selecting a move within self-play
+            'num_epochs': 10,                  # number of epochs for training on self-play data for each iteration
+            'batch_size': 10,                # batch size for training
             'temperature': 1.25,              # temperature for the softmax selection of moves
             'C': 2,                           # the value of the constant policy
             'augment': False,                 # whether to augment the training data with flipped states
@@ -58,7 +58,7 @@ if __name__ == '__main__':
             'dirichlet_epsilon': 0.25,        # the value of the dirichlet noise
             'alias': (game_name + "_" + model_name)
         }
-	model = ResNet(game_mode, 9, 3, device)
+	model = ResNet(game_mode, 9, 64, device)
 	optimizer = Adam(model.parameters(), lr=0.001, weight_decay=0.0001)
 	os.makedirs(f'AlphaZero/Models/{game_name+"_"+model_name}', exist_ok=True)
 	alphaZero = AlphaZero(model, optimizer, game_mode, args)
