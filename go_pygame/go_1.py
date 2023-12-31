@@ -185,9 +185,12 @@ class Go():
         return state
 
     def get_next_state(self, state, action, player):
-        
 
-        if action == 56 or action == 90:
+        if action == self.row_count * self.column_count:
+            if self.passed_player_1:
+                self.passed_player_2 = True
+            else:
+                self.passed_player_1 = True
             return state # pass move
 
         a = action // self.row_count
@@ -196,6 +199,9 @@ class Go():
         state_copy = np.copy(state)
         state[a][b] = player
         state = self.captures(state, -player, a, b)[1]
+
+        self.passed_player_1 = False
+        self.passed_player_2 = False
 
         self.state_history.append(np.copy(state_copy))
 
@@ -209,31 +215,16 @@ class Go():
 
         if len(self.state_history) > 1:
             if np.array_equal(state, self.state_history[-2]):
-                print("Ko violation")
+                #print("Ko violation")
                 return False
-
-        if action == (7, 7) or action == (9, 9):
-            print("passei animal")
-
-            if player == self.BLACK:
-                self.passed_player_1 = True
-            else:
-                self.passed_player_2 = True
-
-            if self.passed_player_1 and self.passed_player_2:
-                self.currrent_player = self.get_opponent(self.currrent_player)
-                print("fodeu puto")
-                return False
-
-            return True  # Jogadas especiais de passagem
 
         # Restante do código permanece inalterado
         if a < 0 or a >= self.row_count or b < 0 or b >= self.column_count:
-            print("Invalid move: Out of bounds")
+            #print("Invalid move: Out of bounds")
             return False
 
         if state[a][b] != self.EMPTY:
-            print("Space Occupied")
+            #print("Space Occupied")
             return False
 
         state_copy = self.set_stone(a, b, state_copy, player)
@@ -243,7 +234,7 @@ class Go():
         else:
             libs, block = self.count(b, a, state_copy, player, [], [])
             if len(libs) == 0:
-                print("Invalid move: Suicide")
+                #print("Invalid move: Suicide")
                 return False
             else:
                 return True
@@ -268,28 +259,19 @@ class Go():
 
         scoring, endgame = self.scoring(state)
 
+        if self.passed_player_1 and self.passed_player_2:
+            endgame=True
+
         if endgame:
-            if player == self.BLACK:
-                if scoring > 0:
-                    return 1, True
-                else:
-                    return -1, True
+            if scoring > 0:
+                return 1, True
             else:
-                if scoring < 0:
-                    return 1, True
-                else:
-                    return -1, True
+                return -1, True
         else:
-            if player == self.BLACK:
-                if scoring > 0:
-                    return 1, False
-                else:
-                    return -1, False
+            if scoring > 0:
+                return 1, False
             else:
-                if scoring < 0:
-                    return 1, False
-                else:
-                    return -1, False
+                return -1, False
                 
 
     def scoring(self, state):
@@ -300,7 +282,7 @@ class Go():
         black = 0
         white = 0
         empty = 0
-        endgame = True
+        endgame = False
         # print("Scoring")
         for x in range(self.column_count):
             for y in range(self.row_count):

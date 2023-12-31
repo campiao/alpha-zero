@@ -265,8 +265,11 @@ def menu_go():
                   player = "alphazero"
 
               if PLAY_BUTTON.checkForInput(GO_MENU_MOUSE_POS):
-                  play_go(goSizeBoard)
-                  game_over("GO", "HUMAN", 120, 0)
+                  b,w,win=play_go(goSizeBoard)
+                  if win==1:
+                    win="HUMAN"
+                  else: win="ALPHAZERO"
+                  game_over("GO", win, b, w)
               if PLAY_BACK.checkForInput(GO_MENU_MOUSE_POS):
                   main_menu()
 

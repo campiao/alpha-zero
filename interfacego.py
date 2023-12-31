@@ -110,6 +110,8 @@ def play_go(board_size):
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if PASS.checkForInput(PASS_POS):
+                        action=board_size*board_size
+                        state=go_game.get_next_state(state,action, player)
                         player = -player
                     else:
                         mouse_pos = pygame.mouse.get_pos()
@@ -142,7 +144,9 @@ def play_go(board_size):
             player = -player
         winner, win = go_game.get_value_and_terminated(state,player)
         if win:
-            return go_game.count_influenced_territory_enhanced(state)
+            b,w=go_game.count_influenced_territory_enhanced(state)
+            print(b,w,winner)
+            return b,w,winner
         pygame.display.update()
 
 if __name__ == "__main__":
