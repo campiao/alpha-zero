@@ -53,7 +53,7 @@ if __name__ == '__main__':
             'batch_size': 10,                # batch size for training
             'temperature': 1.25,              # temperature for the softmax selection of moves
             'C': 2,                           # the value of the constant policy
-            'augment': False,                 # whether to augment the training data with flipped states
+            'augment': True,                 # whether to augment the training data with flipped states
             'dirichlet_alpha': 0.3,           # the value of the dirichlet noise
             'dirichlet_epsilon': 0.25,        # the value of the dirichlet noise
             'alias': (game_name + "_" + model_name)
