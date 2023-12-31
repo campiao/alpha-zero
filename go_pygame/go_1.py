@@ -163,15 +163,13 @@ class Go():
         return state
 
     def get_next_state(self, state, action, player):
-        if not isinstance(action, tuple):
-            # Se action não for uma tupla, trata como um índice especial
-            return state
+        
 
-        if len(action) != 2:
-            # Se a tupla não tiver exatamente dois elementos, trata como um índice especial
-            return state
+        if action == self.row_count * self.column_count:
+            return state # pass move
 
-        a, b = action  # Desempacota a tupla para obter as coordenadas
+        a = action // self.row_count
+        b = action % self.column_count
 
         state_copy = np.copy(state)
         state[a][b] = player
@@ -193,7 +191,7 @@ class Go():
                 return False
 
         if state[a][b] != self.EMPTY:
-            print("Space Occupied")
+            #print("Space Occupied")
             return False
 
         statecopy = self.set_stone(a, b, statecopy, player)
@@ -205,7 +203,7 @@ class Go():
             libs, block = self.count(b, a, statecopy, player, [], [])
             # print(libs)
             if len(libs) == 0:
-                print("Invalid, Suicide")
+                #print("Invalid, Suicide")
                 return False
             else:
                 return True
@@ -222,49 +220,95 @@ class Go():
         newstate = np.concatenate([newstate, [1]])
         return (newstate).astype(np.uint8)
 
-    def get_value_and_terminated(self, state, action):
-        if self.check_board_full(state=state):
-            if self.check_win(state=state, action=action):
-                return 1, True
-            return 0, False
-        return 0, False
+    def get_value_and_terminated(self, state, player):
+        '''
+        # Description:
+        Returns the value of the state and if the game is over.
+        '''
 
-    def check_win(self, state, action):
-        if action == self.row_count * self.column_count:
-            return False
-        player = state[action // self.row_count][action % self.column_count]
-        black_pieces = 0
-        white_pieces = 0
-        for row in state:
-            for stone in row:
-                if stone == 1:
-                    black_pieces += 1
-                if stone == 2:
-                    white_pieces += 1
+        scoring, endgame = self.scoring(state)
 
-        black_points = black_pieces
-        white_points = white_pieces + self.komi
-
-        if player == 1:
-            if black_points > white_points:
-                return True
-            return False
+        if endgame:
+            if player == self.BLACK:
+                if scoring > 0:
+                    return 1, True
+                else:
+                    return -1, True
+            else:
+                if scoring < 0:
+                    return 1, True
+                else:
+                    return -1, True
         else:
-            if white_points > black_points:
-                return True
-            return False
+            if player == self.BLACK:
+                if scoring > 0:
+                    return 1, False
+                else:
+                    return -1, False
+            else:
+                if scoring < 0:
+                    return 1, False
+                else:
+                    return -1, False
+                
 
-    def check_board_full(self, state: list) -> bool:
+    def scoring(self, state):
+        '''
+        # Description:
+        Checks the score of the game.
+        '''
+        black = 0
+        white = 0
+        empty = 0
+        endgame = True
+        # print("Scoring")
+        for x in range(self.column_count):
+            for y in range(self.row_count):
+                if state[x][y] == self.EMPTY:
+                    empty += 1
+                    if empty >= self.column_count * self.row_count // 5: # if more than 1/4 of the board is empty, it is not the endgame
+                        endgame = False
 
-        empty_count = 0
-        for row in state:
-            for stone in row:
-                if stone == 0:
-                    empty_count += 1
-                if empty_count >= 3:
-                    return False
+        black, white = self.count_influenced_territory_enhanced(state)
+                            
+        return black - (white + self.komi), endgame
 
-        return True
+
+    def count_influenced_territory_enhanced(self, board):
+        black_territory = 0
+        white_territory = 0
+        visited = set()
+
+        # Function to calculate influence score
+        def influence_score(x, y):
+            score = 0
+            for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < len(board) and 0 <= ny < len(board[0]):
+                    score += board[nx][ny]
+            return score
+
+        # Function to explore territory
+        def explore_territory(x, y):
+            nonlocal black_territory, white_territory
+            if (x, y) in visited or not (0 <= x < len(board) and 0 <= y < len(board[0])):
+                return
+            visited.add((x, y))
+
+            if board[x][y] == 0:
+                score = influence_score(x, y)
+                if score > 0:
+                    black_territory += 1
+                elif score < 0:
+                    white_territory += 1
+
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if board[i][j] == 0 and (i, j) not in visited:
+                    explore_territory(i, j)
+
+        return black_territory, white_territory
+
 
     def get_opponent(self, player):
         return -player

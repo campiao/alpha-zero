@@ -59,11 +59,11 @@ def prepair_model(game):
             'augment': False,                 # whether to augment the training data with flipped states
             'dirichlet_alpha': 0.3,           # the value of the dirichlet noise
             'dirichlet_epsilon': 0.125,       # the value of the dirichlet noise
-            'alias': ('Attaxx_TestModel')
+            'alias': ('Attaxx_faltapassargo')
         }
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = ResNet(game, 9, 3, device)
-    model.load_state_dict(torch.load(f'AlphaZero/Models/Attaxx_NoCrash/model_9.pt', map_location=device))
+    model.load_state_dict(torch.load(f'AlphaZero/Models/Attaxx_faltapassargo/model_7.pt', map_location=device))
     #optimizer.load_state_dict(torch.load(f'AlphaZero/Models/Attax_TestModel/optimizer_4.pt', map_location=device))
     mcts = MCTS(model, game, args)
     return mcts

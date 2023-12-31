@@ -72,11 +72,11 @@ def prepair_model(game):
             'augment': False,                 # whether to augment the training data with flipped states
             'dirichlet_alpha': 0.3,           # the value of the dirichlet noise
             'dirichlet_epsilon': 0.25,        # the value of the dirichlet noise
-            'alias': ('Go1234')
+            'alias': ('Goolaola')
     }
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = ResNet(game, 9, 3, device)
-    model.load_state_dict(torch.load(f'AlphaZero/Models/Go1234/model_2.pt', map_location=device))
+    model.load_state_dict(torch.load(f'AlphaZero/Models/Goolaola/model_1.pt', map_location=device))
     #optimizer.load_state_dict(torch.load(f'AlphaZero/Models/Attax_TestModel/optimizer_4.pt', map_location=device))
     mcts = MCTS(model, game, args)
     return mcts
@@ -140,7 +140,7 @@ def play_go(board_size):
             else:
                 state = go_game.get_next_state(state, action, player)
             player = -player
-        winner, win = go_game.get_value_and_terminated(state, action,player)
+        winner, win = go_game.get_value_and_terminated(state,player)
         if win:
             return go_game.count_influenced_territory_enhanced(state)
         pygame.display.update()

@@ -117,7 +117,7 @@ if __name__ == '__main__':
                     print(f"\nAlphaZero Action: {action}\n")
                     state = game.get_next_state(state, action, player)
 
-                winner, win = game.get_value_and_terminated(state, action)
+                winner, win = game.get_value_and_terminated(state, player)
                 if win:
                     game.print_board(state)
                     print(f"player {winner} wins")
