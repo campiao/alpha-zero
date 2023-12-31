@@ -174,7 +174,36 @@ class AlphaZero:
         self.args = args
         self.mcts = MCTS(model, game, args)
 
+    def check_simmetries(self, state):
+        rot90_state = np.rot90(state, k=1)
+        rot90 = (state == rot90_state).all()
+
+        rot180_state = np.rot90(state, k=2)
+        rot180 = (state == rot180_state).all()
+
+        rot270_state = np.rot90(state, k=3)
+        rot270 = (state == rot270_state).all()
+
+        flip_hori_state = np.fliplr(state)
+        flip_hori = (state == flip_hori_state).all()
+
+        flip_vert_state = np.flipud(state)
+        flip_vert = (state == flip_vert_state).all()
+
+        rot90_flip_hor_state = np.rot90(np.fliplr(state), k=1)
+        rot90_flip_hor = (state == rot90_flip_hor_state).all()
+
+        rot90_flip_vert_state = np.rot90(np.flipud(state), k=1)
+        rot90_flip_vert = (state == rot90_flip_vert_state).all()
+
+        return ((rot90, rot90_state), (rot180, rot180_state), (rot270, rot270_state), 
+                (flip_hori, flip_hori_state), (flip_vert, flip_vert_state), 
+                (rot90_flip_hor, rot90_flip_hor_state), (rot90_flip_vert, rot90_flip_vert_state))
+
+
     def augment_state(self, state):
+        
+        rot90, rot180, rot270, flip_hori, flip_vert, rot90_flip_hor, rot90_flip_vert = self.check_simmetries(state)
 
         augmented_states = []
         
@@ -182,25 +211,32 @@ class AlphaZero:
         augmented_states.append(state)
         
         # Rotate 90 degrees clockwise
-        augmented_states.append(np.rot90(state, k=1))
+        if not rot90[0]:
+            augmented_states.append(rot90[1])
         
         # Rotate 180 degrees clockwise
-        augmented_states.append(np.rot90(state, k=2))
+        if not rot180[0]:
+            augmented_states.append(rot180[1])
         
         # Rotate 270 degrees clockwise
-        augmented_states.append(np.rot90(state, k=3))
+        if not rot270[0]:
+            augmented_states.append(rot270[1])
         
         # Flip horizontally
-        augmented_states.append(np.fliplr(state))
+        if not flip_hori[0]:
+            augmented_states.append(flip_hori[1])
         
         # Flip vertically
-        augmented_states.append(np.flipud(state))
+        if not flip_vert[0]:
+            augmented_states.append(flip_vert[1])
         
         # Rotate 90 degrees clockwise and flip horizontally
-        augmented_states.append(np.rot90(np.fliplr(state), k=1))
+        if not rot90_flip_hor[0]:
+            augmented_states.append(rot90_flip_hor[1])
         
         # Rotate 90 degrees clockwise and flip vertically
-        augmented_states.append(np.rot90(np.flipud(state), k=1))
+        if not rot90_flip_vert[0]:
+            augmented_states.append(rot90_flip_vert[1])
         
         return augmented_states
         
