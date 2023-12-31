@@ -13,11 +13,10 @@ def play_go(board_size, player):
 
         # Adiciona a verificação de jogada válida
         if not game.is_valid_move(state, (a, b), player):
-            print("Jogada inválida. Escolha outra jogada.")
             continue  # Pula para a próxima iteração do loop
 
         action = a * game.row_count + b
-        state = game.get_next_state(state, (a, b), player)
+        state = game.get_next_state(state, action, player)
 
         winner, win = game.get_value_and_terminated(state, action)
         if win:

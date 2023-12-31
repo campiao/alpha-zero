@@ -20,12 +20,34 @@ class Go():
         self.seki_count = 0
         self.seki_liberties = []
         self.state_history = [self.get_initial_state()]
+        self.currrent_player = self.BLACK
+        self.passed_player_1 = False
+        self.passed_player_2 = False
 
     def make_move(self, action, player):
+        if action == (7, 7) or action == (9, 9):
+            if player == self.BLACK:
+                self.passed_player_1 = True
+            elif player == self.WHITE:
+                self.passed_player_2 = True
+
+            if self.passed_player_1 and self.passed_player_2:
+                self.currrent_player = self.get_opponent(self.currrent_player)
+                return True
+            print("passei animal")
+            return False
+
+        self.passed_player_1 = False
+        self.passed_player_2 = False
+
         state = self.get_current_state()
         new_state = self.get_next_state(state, action, player)
         self.state_history.append(new_state)
+        self.currrent_player = self.get_opponent(self.currrent_player)
 
+        print(self.passed_player_1)
+        print(self.passed_player_2)
+        return False
     def get_initial_state(self):
         board = np.zeros((self.row_count, self.column_count))
         self.state_history = [np.copy(board)]
@@ -165,7 +187,7 @@ class Go():
     def get_next_state(self, state, action, player):
         
 
-        if action == self.row_count * self.column_count:
+        if action == 56 or action == 90:
             return state # pass move
 
         a = action // self.row_count
@@ -179,31 +201,49 @@ class Go():
 
         return state
 
+    # Dentro da classe Go
+
     def is_valid_move(self, state: list, action: tuple, player: int) -> bool:
-
-
-        a = action[0]
-        b = action[1]
-        statecopy = np.copy(state).astype(np.int8)
+        a, b = action[0], action[1]  # Mantenha as coordenadas originais
+        state_copy = np.copy(state).astype(np.int8)
 
         if len(self.state_history) > 1:
             if np.array_equal(state, self.state_history[-2]):
+                print("Ko violation")
                 return False
 
-        if state[a][b] != self.EMPTY:
-            #print("Space Occupied")
+        if action == (7, 7) or action == (9, 9):
+            print("passei animal")
+
+            if player == self.BLACK:
+                self.passed_player_1 = True
+            else:
+                self.passed_player_2 = True
+
+            if self.passed_player_1 and self.passed_player_2:
+                self.currrent_player = self.get_opponent(self.currrent_player)
+                print("fodeu puto")
+                return False
+
+            return True  # Jogadas especiais de passagem
+
+        # Restante do código permanece inalterado
+        if a < 0 or a >= self.row_count or b < 0 or b >= self.column_count:
+            print("Invalid move: Out of bounds")
             return False
 
-        statecopy = self.set_stone(a, b, statecopy, player)
+        if state[a][b] != self.EMPTY:
+            print("Space Occupied")
+            return False
 
-        if self.captures(statecopy, -player, a, b)[0] == True:
+        state_copy = self.set_stone(a, b, state_copy, player)
+
+        if self.captures(state_copy, -player, a, b)[0] == True:
             return True
         else:
-            # print("no captures")
-            libs, block = self.count(b, a, statecopy, player, [], [])
-            # print(libs)
+            libs, block = self.count(b, a, state_copy, player, [], [])
             if len(libs) == 0:
-                #print("Invalid, Suicide")
+                print("Invalid move: Suicide")
                 return False
             else:
                 return True
