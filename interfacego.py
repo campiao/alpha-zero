@@ -111,7 +111,7 @@ def play_go(board_size):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if PASS.checkForInput(PASS_POS):
                         action=board_size*board_size
-                        state=go_game.get_next_state(state,action, player)
+                        state=go_game.get_next_state_mcts(state,action, player)
                         player = -player
                     else:
                         mouse_pos = pygame.mouse.get_pos()
@@ -122,7 +122,7 @@ def play_go(board_size):
                         if  row >=0 and col >=0  and row < board_size and col < board_size:
                             action=col + row * board_size
                             if   go_game.is_valid_move(state, (row,col), player):
-                                state=go_game.get_next_state(state,action, player)
+                                state=go_game.get_next_state_mcts(state,action, player)
                                 player = -player  # Switch player after a move
                                 draw_board(state)
                                 print(state)
@@ -133,6 +133,7 @@ def play_go(board_size):
             action = np.argmax(action)
             print(action)
             if action == board_size*board_size:
+                state=go_game.get_next_state_mcts(state,action, player)
                 print("pasou")
                 pass_text = get_font(20).render("O modelo passou", True, "#ffffff")
                 pass_rect = pass_text.get_rect(center=(1105, 400))
@@ -140,7 +141,7 @@ def play_go(board_size):
                 pygame.display.update()
                 pygame.time.wait(2000)
             else:
-                state = go_game.get_next_state(state, action, player)
+                state = go_game.get_next_state_mcts(state, action, player)
             player = -player
         winner, win = go_game.get_value_and_terminated(state,player)
         if win:

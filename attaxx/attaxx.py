@@ -104,6 +104,9 @@ class Attaxx:
                 return False
         
         return True
+    
+    def get_game_name():
+        return "Attaxx"
 
     def check_win_and_over(self, state, action):
         # action não é necessário para o attaxx, mas é necessário para o go

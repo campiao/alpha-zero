@@ -109,13 +109,13 @@ if __name__ == '__main__':
                     a, b = tuple(int(x.strip()) for x in input("\nInput your move: ").split(' '))
                     print("\n")
                     action = a * game.row_count + b
-                    state = game.get_next_state(state, action, player)
+                    state = game.get_next_state_mcts(state, action, player)
                 else:
                     neut = game.change_perspective(state, player)
                     action = mcts.search(neut, player)
                     action = np.argmax(action)
                     print(f"\nAlphaZero Action: {action}\n")
-                    state = game.get_next_state(state, action, player)
+                    state = game.get_next_state_mcts(state, action, player)
 
                 winner, win = game.get_value_and_terminated(state, player)
                 if win:

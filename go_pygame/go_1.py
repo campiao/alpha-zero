@@ -24,30 +24,7 @@ class Go():
         self.passed_player_1 = False
         self.passed_player_2 = False
 
-    def make_move(self, action, player):
-        if action == (7, 7) or action == (9, 9):
-            if player == self.BLACK:
-                self.passed_player_1 = True
-            elif player == self.WHITE:
-                self.passed_player_2 = True
 
-            if self.passed_player_1 and self.passed_player_2:
-                self.currrent_player = self.get_opponent(self.currrent_player)
-                return True
-            print("passei animal")
-            return False
-
-        self.passed_player_1 = False
-        self.passed_player_2 = False
-
-        state = self.get_current_state()
-        new_state = self.get_next_state(state, action, player)
-        self.state_history.append(new_state)
-        self.currrent_player = self.get_opponent(self.currrent_player)
-
-        print(self.passed_player_1)
-        print(self.passed_player_2)
-        return False
     def get_initial_state(self):
         board = np.zeros((self.row_count, self.column_count))
         self.state_history = [np.copy(board)]
@@ -180,16 +157,22 @@ class Go():
         # print("Seki Count: " + str(self.seki_count))
         return check, state
 
+
+    def get_game_name():
+        return "Go"
+    
     def set_stone(self, a, b, state, player):
         state[a][b] = player
         return state
 
-    def get_next_state(self, state, action, player):
+    def get_next_state_mcts(self, state, action, player):
 
         if action == self.row_count * self.column_count:
             if self.passed_player_1:
+                print("segundo falso")
                 self.passed_player_2 = True
             else:
+                print("primeiro falso")
                 self.passed_player_1 = True
             return state # pass move
 
@@ -199,9 +182,25 @@ class Go():
         state_copy = np.copy(state)
         state[a][b] = player
         state = self.captures(state, -player, a, b)[1]
-
+        print("os dois falsos")
         self.passed_player_1 = False
         self.passed_player_2 = False
+
+        self.state_history.append(np.copy(state_copy))
+
+        return state
+    
+    def get_next_state(self, state, action, player):
+
+        if action == self.row_count * self.column_count:
+            return state # pass move
+
+        a = action // self.row_count
+        b = action % self.column_count
+
+        state_copy = np.copy(state)
+        state[a][b] = player
+        state = self.captures(state, -player, a, b)[1]
 
         self.state_history.append(np.copy(state_copy))
 
@@ -252,6 +251,7 @@ class Go():
         return (newstate).astype(np.uint8)
 
     def get_value_and_terminated(self, state, player):
+        
         '''
         # Description:
         Returns the value of the state and if the game is over.
