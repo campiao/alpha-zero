@@ -149,8 +149,8 @@ def play_go(board_size):
                 state = go_game.get_next_state_mcts(state, action, player)
             player = -player
         winner, win = go_game.get_value_and_terminated(state,player)
+        b,w=go_game.count_influenced_territory_enhanced(state)
         if win:
-            b,w=go_game.count_influenced_territory_enhanced(state)
             print(b,w,winner)
             return b,w,winner
         pygame.display.update()
