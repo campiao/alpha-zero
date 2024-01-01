@@ -13,9 +13,10 @@ class Go():
         self.row_count = 7 if small_board else 9
         self.column_count = 7 if small_board else 9
         self.board_size = 7 if small_board else 9
-        self.komi = 6.5
+        self.komi = 5.5
         self.action_size = self.row_count * self.column_count + 1
         self.liberties = []
+        self.name="Go"
         self.block = []
         self.seki_count = 0
         self.seki_liberties = []
@@ -158,8 +159,7 @@ class Go():
         return check, state
 
 
-    def get_game_name():
-        return "Go"
+ 
     
     def set_stone(self, a, b, state, player):
         state[a][b] = player

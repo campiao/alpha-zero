@@ -254,7 +254,7 @@ class AlphaZero:
             temperature_action_probs = action_probs ** (1 / self.args['temperature'])
             temperature_action_probs /= np.sum(temperature_action_probs)
             action = np.random.choice(self.game.action_size, p=temperature_action_probs)
-            if self.game.get_game_name() == 'Ataxx':
+            if self.game.name == 'Attaxx':
                 state = self.game.get_next_state(state, action, player)
             else:
                 state = self.game.get_next_state_mcts(state, action, player)

@@ -5,6 +5,7 @@ class Attaxx:
     def __init__(self, args: tuple):
         self.column_count : int = args[0]
         self.row_count : int = args[1]
+        self.name="Attaxx"
         self.action_size : int = (self.column_count * self.row_count) ** 2
     
     def get_initial_state(self):
@@ -105,8 +106,7 @@ class Attaxx:
         
         return True
     
-    def get_game_name():
-        return "Attaxx"
+
 
     def check_win_and_over(self, state, action):
         # action não é necessário para o attaxx, mas é necessário para o go
