@@ -88,6 +88,8 @@ def play_go(board_size):
     go_game = Go(board_size)
     player = 1
     action=0
+    b=0
+    w=0
     state=go_game.get_initial_state()
     mcts=prepair_model(go_game)
     if board_size == 7: margin = 1 
@@ -97,7 +99,10 @@ def play_go(board_size):
         Ataxx_MENU_TEXT = get_font(50).render("GO", True, "#d7fcd4")
         Ataxx_MENU_RECT = Ataxx_MENU_TEXT.get_rect(center=(180,100))
         SCREEN.blit(Ataxx_MENU_TEXT, Ataxx_MENU_RECT)
-        PASS = Button(image=None, pos=(1100,250), text_input="PASS", font=get_font(30), base_color="#b68f40", hovering_color="White")
+        Go_Pontuacao_TEXT = get_font(30).render(f"HUMAN {b} - {w} ALPHAZERO", True, "#d7fcd4")
+        Go_Pontuacao_Rect = Go_Pontuacao_TEXT.get_rect(center=(700,650))
+        SCREEN.blit(Go_Pontuacao_TEXT,Go_Pontuacao_Rect)
+        PASS = Button(image=None, pos=(1100,400), text_input="PASS", font=get_font(50), base_color="#b68f40", hovering_color="White")
         PASS_POS = pygame.mouse.get_pos()
         PASS.changeColor(PASS_POS)
         PASS.update(SCREEN)
