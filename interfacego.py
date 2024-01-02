@@ -102,7 +102,7 @@ def play_go(board_size):
         Go_Pontuacao_TEXT = get_font(30).render(f"HUMAN {b} - {w} ALPHAZERO", True, "#d7fcd4")
         Go_Pontuacao_Rect = Go_Pontuacao_TEXT.get_rect(center=(700,650))
         SCREEN.blit(Go_Pontuacao_TEXT,Go_Pontuacao_Rect)
-        PASS = Button(image=None, pos=(1100,400), text_input="PASS", font=get_font(50), base_color="#b68f40", hovering_color="White")
+        PASS = Button(image=None, pos=(1100,300), text_input="PASS", font=get_font(50), base_color="#b68f40", hovering_color="White")
         PASS_POS = pygame.mouse.get_pos()
         PASS.changeColor(PASS_POS)
         PASS.update(SCREEN)
