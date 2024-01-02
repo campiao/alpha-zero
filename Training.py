@@ -47,14 +47,14 @@ if __name__ == '__main__':
 	args = {
             'game': game_name,
             'num_iterations': 25,             # number of highest level iterations
-            'num_selfPlay_iterations': 50,   # number of self-play games to play within each iteration
-            'num_mcts_searches': 25,         # number of mcts simulations when selecting a move within self-play
-            'num_epochs': 10,                  # number of epochs for training on self-play data for each iteration
-            'batch_size': 10,                # batch size for training
-            'temperature': 1.25,              # temperature for the softmax selection of moves
-            'C': 2,                           # the value of the constant policy
+            'num_selfPlay_iterations': 100,   # number of self-play games to play within each iteration
+            'num_mcts_searches': 10,         # number of mcts simulations when selecting a move within self-play
+            'num_epochs': 2,                  # number of epochs for training on self-play data for each iteration
+            'batch_size': 1000,                # batch size for training
+            'temperature': 1,              # temperature for the softmax selection of moves
+            'C': 4,                           # the value of the constant policy
             'augment': True,                 # whether to augment the training data with flipped states
-            'dirichlet_alpha': 0.3,           # the value of the dirichlet noise
+            'dirichlet_alpha': 1.0,           # the value of the dirichlet noise
             'dirichlet_epsilon': 0.25,        # the value of the dirichlet noise
             'alias': (game_name + "_" + model_name)
         }

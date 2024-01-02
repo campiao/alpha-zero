@@ -169,10 +169,8 @@ class Go():
 
         if action == self.row_count * self.column_count:
             if self.passed_player_1:
-                print("segundo falso")
                 self.passed_player_2 = True
             else:
-                print("primeiro falso")
                 self.passed_player_1 = True
             return state # pass move
 
@@ -182,7 +180,6 @@ class Go():
         state_copy = np.copy(state)
         state[a][b] = player
         state = self.captures(state, -player, a, b)[1]
-        print("os dois falsos")
         self.passed_player_1 = False
         self.passed_player_2 = False
 
