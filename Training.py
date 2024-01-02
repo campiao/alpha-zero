@@ -1,5 +1,6 @@
 from go_pygame.go_1 import Go
 from attaxx.attaxx import Attaxx
+from args_manager import load_args_from_json, save_args_to_json
 
 import os
 import torch, random
@@ -44,22 +45,13 @@ if __name__ == '__main__':
 		game_name = "Attaxx"
 
 	model_name = input("Alias of the new model: ")
-	args = {
-            'game': game_name,
-            'num_iterations': 25,             # number of highest level iterations
-            'num_selfPlay_iterations': 100,   # number of self-play games to play within each iteration
-            'num_mcts_searches': 10,         # number of mcts simulations when selecting a move within self-play
-            'num_epochs': 2,                  # number of epochs for training on self-play data for each iteration
-            'batch_size': 1000,                # batch size for training
-            'temperature': 1,              # temperature for the softmax selection of moves
-            'C': 4,                           # the value of the constant policy
-            'augment': True,                 # whether to augment the training data with flipped states
-            'dirichlet_alpha': 1.0,           # the value of the dirichlet noise
-            'dirichlet_epsilon': 0.25,        # the value of the dirichlet noise
-            'alias': (game_name + "_" + model_name)
-        }
+	path = f"AlphaZero/Models/{game_name}_{model_name}"
+	os.makedirs(path, exist_ok=True)
+	with open(f"{path}/args.json", "w") as openfile:
+		pass
+	args = load_args_from_json(path, game_name, model_name)
+	
 	model = ResNet(game_mode, 9, 64, device)
 	optimizer = Adam(model.parameters(), lr=0.001, weight_decay=0.0001)
-	os.makedirs(f'AlphaZero/Models/{game_name+"_"+model_name}', exist_ok=True)
 	alphaZero = AlphaZero(model, optimizer, game_mode, args)
 	alphaZero.learn()

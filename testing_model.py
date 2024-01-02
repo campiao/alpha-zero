@@ -4,6 +4,7 @@ from attaxx.attaxx import Attaxx
 from go_pygame.go_1 import Go
 import random
 import os
+from args_manager import load_args_from_json, save_args_to_json
 
 
 class RandomPlayer():
@@ -133,7 +134,7 @@ def select_attaxx_size():
     
 def get_latest_iteration(files_path):
     files = os.listdir(files_path)
-    new_set = {int(x.replace('model_', '').replace('.pt','')) for x in files if "optimizer_" not in x}
+    new_set = {int(x.replace('model_', '').replace('.pt','')) for x in files if "model_" in x}
     return files_path+f"/model_{max(new_set)}.pt"
 
 def main():
@@ -147,44 +148,30 @@ def main():
     selection = int(input())
     if selection == 1:
         game_type = 1
+        game_name = "Go"
         small_board = select_go_size()
         game = Go(small_board)
     elif selection == 2:
         game_type = 2
+        game_name = "Attaxx"
         size = select_attaxx_size()
         game = Attaxx([size,size])
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = ResNet(game, 9, 64, device)
+
     print("\nInsert only the model's name, as in 'Attaxx_ModelName/model_x' or 'Go_ModelName':")
     print("Input example: 'ParamTweak' (without quotes)")
     print("The latest iteration of the model will be the one selected")
-    model_name = input()
-    if game_type == 1:
-        path = f"AlphaZero/Models/Go_{model_name}"
-        model_path = get_latest_iteration(path)
-        print(f"\nLatest Model: {model_path}")
-        model.load_state_dict(torch.load(model_path, map_location=device))
-    elif game_type == 2:
-        path = f"AlphaZero/Models/Attaxx_{model_name}"
-        model_path = get_latest_iteration(path)
-        print(f"\nLatest Model: {model_path}")
-        model.load_state_dict(torch.load(model_path, map_location=device))
 
-    args = {
-            'game': 'Attaxx',
-            'num_iterations': 25,              # number of highest level iterations
-            'num_selfPlay_iterations': 100,   # number of self-play games to play within each iteration
-            'num_mcts_searches': 10,          # number of mcts simulations when selecting a move within self-play
-            'num_epochs': 2,                  # number of epochs for training on self-play data for each iteration
-            'batch_size': 1000,                 # batch size for training
-            'temperature': 1.0,              # temperature for the softmax selection of moves
-            'C': 4,                           # the value of the constant policy
-            'augment': False,                 # whether to augment the training data with flipped states
-            'dirichlet_alpha': 1.0,           # the value of the dirichlet noise
-            'dirichlet_epsilon': 0.125,       # the value of the dirichlet noise
-            'alias': ('Attaxx_ParamTweak')
-        }
+    model_name = input()
+    path = f"AlphaZero/Models/{game_name}_{model_name}"
+    model_path = get_latest_iteration(path)
+    print(f"\nLatest Model: {model_path}")
+    model.load_state_dict(torch.load(model_path, map_location=device))
+
+    args = load_args_from_json(path, game_name, model_name)
+
     mcts = MCTS(model, game, args)
 
     random_opp = RandomPlayer(game)
