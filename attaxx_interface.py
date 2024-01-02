@@ -59,11 +59,11 @@ def prepair_model(game):
             'augment': False,                 # whether to augment the training data with flipped states
             'dirichlet_alpha': 0.3,           # the value of the dirichlet noise
             'dirichlet_epsilon': 0.125,       # the value of the dirichlet noise
-            'alias': ('Attaxx_final0')
+            'alias': ('Attaxx_final12_6')
         }
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = ResNet(game, 9, 3, device)
-    model.load_state_dict(torch.load(f'AlphaZero/Models/Attaxx_final0/model_7.pt', map_location=device))
+    model = ResNet(game, 9, 64, device)
+    model.load_state_dict(torch.load(f'AlphaZero/Models/Attaxx_final2_4/model_99.pt', map_location=device))
     #optimizer.load_state_dict(torch.load(f'AlphaZero/Models/Attax_TestModel/optimizer_4.pt', map_location=device))
     mcts = MCTS(model, game, args)
     return mcts
@@ -102,8 +102,8 @@ def play_attaxx(size):
             
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = pygame.mouse.get_pos()
-                    col = (mouse_pos[0] - ((1280 - 400) // 2)) // 100 
-                    row = (mouse_pos[1] - ((720 - 400) // 2)) // 100 
+                    col = (mouse_pos[0] - offset_x) // 100
+                    row = (mouse_pos[1] - offset_y) // 100 
                     if selected_piece is None and state[row][col] == player:
                         print("selecionei")
                         # If no piece is selected and the clicked piece belongs to the current player

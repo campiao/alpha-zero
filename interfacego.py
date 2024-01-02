@@ -76,7 +76,7 @@ def prepair_model(game):
     }
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = ResNet(game, 9, 3, device)
-    model.load_state_dict(torch.load(f'AlphaZero/Models/Goolaola/model_1.pt', map_location=device))
+    model.load_state_dict(torch.load(f'AlphaZero/Models/Goolaola/model_-1.pt', map_location=device))
     #optimizer.load_state_dict(torch.load(f'AlphaZero/Models/Attax_TestModel/optimizer_4.pt', map_location=device))
     mcts = MCTS(model, game, args)
     return mcts
