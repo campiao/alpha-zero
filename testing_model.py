@@ -74,7 +74,7 @@ def test_model(game, mcts, enemy, n_games):
         first_player = (first_player_decider % 2 == 0)
         model_player = 1 if not first_player else -1
         while True:
-            if first_player:
+            if not player == model_player:
                 action = enemy.get_next_action(state, player)
                 state = game.get_next_state(state, action, player)
             else:
