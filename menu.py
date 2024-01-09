@@ -1,7 +1,7 @@
 import pygame,sys
 from button import Button 
-from attaxx_interface import play_attaxx
-from interfacego import play_go
+from attaxx_interface import play_attaxx, play_attaxx_aivsai
+from interfacego import play_go, play_go_aivsai
 #from ataxx import ataxx
 
 pygame.init()
@@ -45,10 +45,10 @@ def menu_ataxx():
                       text_input="HUMAN", font=get_font(30), base_color="Green", hovering_color="Green")
   
   ALPHAZERO_BUTTON = Button(image=pygame.image.load("images/Play Rect.png"), pos=(840, 450), 
-                      text_input="ALPHAZERO", font=get_font(30), base_color="#b68f40", hovering_color="White")
+                      text_input="BETAONE", font=get_font(30), base_color="#b68f40", hovering_color="White")
   
   ALPHAZERO_BUTTON_SELECTED = Button(image=pygame.image.load("images/Play Rect.png"), pos=(840, 450), 
-                      text_input="ALPHAZERO", font=get_font(30), base_color="Green", hovering_color="Green")
+                      text_input="BETAONE", font=get_font(30), base_color="Green", hovering_color="Green")
   
   PLAY_BUTTON = Button(image=None, pos=(640, 630), 
                       text_input="PLAY", font=get_font(60), base_color="Green", hovering_color="White")
@@ -150,16 +150,25 @@ def menu_ataxx():
                       buttons.append(ALPHAZERO_BUTTON_SELECTED)
                       buttons.append(HUMAN_BUTTON)
 
-                  player = "alphazero"
+                  player = "BETAONE"
 
                 if PLAY_BUTTON.checkForInput(ATAXX_MENU_MOUSE_POS):
-                  winner,count1,count2=play_attaxx(ataxxSizeBoard)
-                  if winner==1:
-                    win="HUMAN"
-                  elif winner==-1:
-                    win="ALPHAZERO"
-                  else: win="DRAW"
-                  game_over("ATAXX", win , count1, count2)
+                  if player == "human":
+                    winner,count1,count2=play_attaxx(ataxxSizeBoard)
+                    if winner==1:
+                      win="HUMAN"
+                    elif winner==-1:
+                      win="ALPHAZERO"
+                    else: win="DRAW"
+                    game_over("ATAXX", win , count1, count2)
+                  else:
+                     winner, count1, count2 = play_attaxx_aivsai(ataxxSizeBoard)
+                     if winner==1:
+                      win="ALPHAZERO"
+                     elif winner==-1:
+                        win="BETAONE"
+                     else: win="DRAW"
+                     game_over("ATAXX", win , count1, count2)
 
                 if PLAY_BACK.checkForInput(ATAXX_MENU_MOUSE_POS):
                     main_menu()
@@ -189,10 +198,10 @@ def menu_go():
                         text_input="HUMAN", font=get_font(30), base_color="Green", hovering_color="Green")
     
     ALPHAZERO_BUTTON = Button(image=pygame.image.load("images/Play Rect.png"), pos=(840, 450), 
-                        text_input="ALPHAZERO", font=get_font(30), base_color="#b68f40", hovering_color="White")
+                        text_input="BETAONE", font=get_font(30), base_color="#b68f40", hovering_color="White")
     
     ALPHAZERO_BUTTON_SELECTED = Button(image=pygame.image.load("images/Play Rect.png"), pos=(840, 450), 
-                        text_input="ALPHAZERO", font=get_font(30), base_color="Green", hovering_color="Green")
+                        text_input="BETAONE", font=get_font(30), base_color="Green", hovering_color="Green")
     
     PLAY_BUTTON = Button(image=None, pos=(640, 630), 
                         text_input="PLAY", font=get_font(60), base_color="Green", hovering_color="White")
@@ -262,14 +271,21 @@ def menu_go():
                       buttons.remove(HUMAN_BUTTON_SELECTED)
                       buttons.append(ALPHAZERO_BUTTON_SELECTED)
                       buttons.append(HUMAN_BUTTON)
-                  player = "alphazero"
+                  player = "betaone"
 
               if PLAY_BUTTON.checkForInput(GO_MENU_MOUSE_POS):
-                  b,w,win=play_go(goSizeBoard)
-                  if win==1:
-                    win="HUMAN"
-                  else: win="ALPHAZERO"
-                  game_over("GO", win, b, w)
+                  if player == "human":
+                    b,w,win=play_go(goSizeBoard)
+                    if win==1:
+                      win="HUMAN"
+                    else: win="ALPHAZERO"
+                    game_over("GO", win, b, w)
+                  else:
+                     b,w,win=play_go_aivsai(goSizeBoard)
+                     if win==1:
+                      win="ALPHAZERO"
+                     else: win="BETAONE"
+                     game_over("GO", win, b, w)
               if PLAY_BACK.checkForInput(GO_MENU_MOUSE_POS):
                   main_menu()
 
