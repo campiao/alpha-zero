@@ -314,5 +314,5 @@ class AlphaZero:
                 self.train(memory)
             print("\n")
             
-            torch.save(self.model.state_dict(), f"AlphaZero/Models/{self.args['alias']}/model_{iteration}.pt")
-            torch.save(self.optimizer.state_dict(), f"AlphaZero/Models/{self.args['alias']}/optimizer_{iteration}.pt")
+            torch.save(self.model.state_dict(), f"AlphaZero/Models/{self.args['alias']}/model.pt")
+            torch.save(self.optimizer.state_dict(), f"AlphaZero/Models/{self.args['alias']}/optimizer.pt")

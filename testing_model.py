@@ -25,9 +25,10 @@ class GreedyPlayer():
         self.game = game
     
     def get_next_action(self, state, player):
-        valid_moves = self.game.get_valid_moves(state, player)
+        state1=np.copy(state)
+        valid_moves = self.game.get_valid_moves(state1, player)
         tmp = [i for i, j in enumerate(valid_moves) if j == 1]
-        action = self.get_best_action(state, tmp, player)
+        action = self.get_best_action(state1, tmp, player)
 
         return action
 
@@ -80,7 +81,6 @@ def test_model(game, mcts, enemy, n_games):
             else:
                 action = get_model_action(game, mcts, state, player)
                 state = game.get_next_state(state, action, player)
-
             winner, win = game.get_value_and_terminated(state, action)
             if win:
                 outcomes.append(winner*model_player)
@@ -135,7 +135,7 @@ def select_attaxx_size():
 def get_latest_iteration(files_path):
     files = os.listdir(files_path)
     new_set = {int(x.replace('model_', '').replace('.pt','')) for x in files if "model_" in x}
-    return files_path+f"/model_{max(new_set)}.pt"
+    return files_path+f"/model.pt"
 
 def main():
     print("Testing Script for Analyzing AlphaZero Models Performance against Random ang Greedy opponents")
