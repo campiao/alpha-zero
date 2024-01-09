@@ -8,6 +8,7 @@ from alphazero import MCTS
 import torch
 from alphazero import ResNet
 import time
+from args_manager import load_args_from_json
 
 SCREEN = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("Menu")
@@ -47,23 +48,11 @@ def get_font(size): # Returns Press-Start-2P in the desired size
 
 
 def prepair_model(game):
-    args = {
-            'game': 'Attaxx',
-            'num_iterations': 8,              # number of highest level iterations
-            'num_selfPlay_iterations': 400,   # number of self-play games to play within each iteration
-            'num_mcts_searches': 60,          # number of mcts simulations when selecting a move within self-play
-            'num_epochs': 4,                  # number of epochs for training on self-play data for each iteration
-            'batch_size': 40,                 # batch size for training
-            'temperature': 1.25,              # temperature for the softmax selection of moves
-            'C': 2,                           # the value of the constant policy
-            'augment': False,                 # whether to augment the training data with flipped states
-            'dirichlet_alpha': 0.3,           # the value of the dirichlet noise
-            'dirichlet_epsilon': 0.125,       # the value of the dirichlet noise
-            'alias': ('Attaxx_final12_6')
-        }
+    model_name = "Attaxx_try1"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = ResNet(game, 9, 64, device)
-    model.load_state_dict(torch.load(f'AlphaZero/Models/Attaxx_final2_4/model_99.pt', map_location=device))
+    args=load_args_from_json(f'AlphaZero/Models/{model_name}', Attaxx, model_name)
+    model.load_state_dict(torch.load(f'AlphaZero/Models/{model_name}/model.pt', map_location=device))
     #optimizer.load_state_dict(torch.load(f'AlphaZero/Models/Attax_TestModel/optimizer_4.pt', map_location=device))
     mcts = MCTS(model, game, args)
     return mcts
