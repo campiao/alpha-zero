@@ -61,7 +61,7 @@ class GreedyPlayer():
 
 def get_model_action(game, mcts, state, player):
     neut = game.change_perspective(state, player)
-    action = mcts.search(neut, player)
+    action = mcts.search(neut, 1)
     action = np.argmax(action)
 
     return action
@@ -83,9 +83,10 @@ def test_model(game, mcts, enemy, n_games):
                 state = game.get_next_state(state, action, player)
             winner, win = game.get_value_and_terminated(state, action)
             if win:
+                print(f"Winner: {winner}, model: {model_player}")
                 outcomes.append(winner*model_player)
                 break;
-
+            #game.print_board(state)
             player = - player
         
         first_player_decider += 1
@@ -176,7 +177,7 @@ def main():
 
     random_opp = RandomPlayer(game)
     greedy_opp = GreedyPlayer(game, game_type=1)
-    n_games = 100
+    n_games = 30
 
     print(f"\nPlaying {n_games} games against RandomOpponent...")
     play_random_results = test_model(game, mcts, random_opp, n_games)

@@ -48,7 +48,7 @@ def get_font(size): # Returns Press-Start-2P in the desired size
 
 
 def prepair_model(game):
-    model_name = "Attaxx_try1"
+    model_name = "Attaxx_try51"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = ResNet(game, 9, 64, device)
     args=load_args_from_json(f'AlphaZero/Models/{model_name}', Attaxx, model_name)
@@ -131,8 +131,8 @@ def play_attaxx(size):
         elif player==-1:
             print("maquina")
             time.sleep(1)
-            neut = game.change_perspective(state, -player)
-            action = mcts.search(neut, player)
+            neut = game.change_perspective(state, player)
+            action = mcts.search(neut, 1)
             action = np.argmax(action)
             state = game.get_next_state(state, action, player)
             player=-player  # Switch player after a move
