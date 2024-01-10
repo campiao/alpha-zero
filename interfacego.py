@@ -76,7 +76,7 @@ def prepair_model(game):
     }
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = ResNet(game, 9, 3, device)
-    model.load_state_dict(torch.load(f'AlphaZero/Models/Goolaola/model_-1.pt', map_location=device))
+    model.load_state_dict(torch.load(f'AlphaZero/Models/Goolaola/model_1.pt', map_location=device))
     #optimizer.load_state_dict(torch.load(f'AlphaZero/Models/Attax_TestModel/optimizer_4.pt', map_location=device))
     mcts = MCTS(model, game, args)
     return mcts
@@ -154,6 +154,73 @@ def play_go(board_size):
             print(b,w,winner)
             return b,w,winner
         pygame.display.update()
+
+
+def play_go_aivsai(board_size):
+    go_game = Go(board_size)
+    player = 1
+    action=0
+    b=0
+    w=0
+    state=go_game.get_initial_state()
+    mcts=prepair_model(go_game)
+    while True:
+        SCREEN.blit(BG,(0,0))
+        Ataxx_MENU_TEXT = get_font(50).render("GO", True, "#d7fcd4")
+        Ataxx_MENU_RECT = Ataxx_MENU_TEXT.get_rect(center=(180,100))
+        SCREEN.blit(Ataxx_MENU_TEXT, Ataxx_MENU_RECT)
+        Go_Pontuacao_TEXT = get_font(30).render(f"ALPHAZERO {b} - {w} BETAONE", True, "#d7fcd4")
+        Go_Pontuacao_Rect = Go_Pontuacao_TEXT.get_rect(center=(700,650))
+        SCREEN.blit(Go_Pontuacao_TEXT,Go_Pontuacao_Rect)
+        draw_board(state)
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                print("clique inútil")
+            if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit()
+        if player==1:
+            time.sleep(1)
+            neut = go_game.change_perspective(state, -player)
+            action = mcts.search(neut, player)
+            action = np.argmax(action)
+            print(action)
+            if action == board_size*board_size:
+                state=go_game.get_next_state_mcts(state,action, player)
+                print("pasou")
+                pass_text = get_font(20).render("O alphazero passou", True, "#ffffff")
+                pass_rect = pass_text.get_rect(center=(1080, 400))
+                SCREEN.blit(pass_text, pass_rect)
+                pygame.display.update()
+                pygame.time.wait(1000)
+            else:
+                state = go_game.get_next_state_mcts(state, action, player)
+            player = -player
+            
+        else:
+            time.sleep(1)
+            neut = go_game.change_perspective(state, -player)
+            action = mcts.search(neut, player)
+            action = np.argmax(action)
+            print(action)
+            if action == board_size*board_size:
+                state=go_game.get_next_state_mcts(state,action, player)
+                print("pasou")
+                pass_text = get_font(20).render("O betaone passou", True, "#ffffff")
+                pass_rect = pass_text.get_rect(center=(1080, 400))
+                SCREEN.blit(pass_text, pass_rect)
+                pygame.display.update()
+                pygame.time.wait(1000)
+            else:
+                state = go_game.get_next_state_mcts(state, action, player)
+            player = -player
+        winner, win = go_game.get_value_and_terminated(state,player)
+        b,w=go_game.count_influenced_territory_enhanced(state)
+        if win:
+            print(b,w,winner)
+            return b,w,winner
+        pygame.display.update()
+
 
 if __name__ == "__main__":
     play_go(7)  # Você pode ajustar o tamanho do tabuleiro conforme necessário

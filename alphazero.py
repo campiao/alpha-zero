@@ -247,7 +247,7 @@ class AlphaZero:
         while True:
 
             neutral_state = self.game.change_perspective(state, player)
-            action_probs = self.mcts.search(neutral_state, player)
+            action_probs = self.mcts.search(neutral_state, 1)
             
             memory.append((neutral_state, action_probs, player))
             

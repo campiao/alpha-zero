@@ -48,7 +48,7 @@ def get_font(size): # Returns Press-Start-2P in the desired size
 
 
 def prepair_model(game):
-    model_name = "Attaxx_try1"
+    model_name = "Attaxx_try51"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = ResNet(game, 9, 64, device)
     args=load_args_from_json(f'AlphaZero/Models/{model_name}', Attaxx, model_name)
@@ -68,8 +68,8 @@ def play_attaxx(size):
     square_size=100
     row1=0
     col1=0
-    count1 =0
-    count2=0 
+    count1 =2
+    count2=2 
     flag=0
     player=1
     selected_piece = None
@@ -131,6 +131,47 @@ def play_attaxx(size):
         elif player==-1:
             print("maquina")
             time.sleep(1)
+            neut = game.change_perspective(state, player)
+            action = mcts.search(neut, 1)
+            action = np.argmax(action)
+            state = game.get_next_state(state, action, player)
+            player=-player  # Switch player after a move
+        winner, win,count1,count2 = game.check_win_and_over(state, action=None)
+        if win:
+            return winner,count1,count2
+        pygame.display.update()
+
+
+def play_attaxx_aivsai(size):
+    pygame.display.set_caption("ALPHAZERO - BETAONE")
+    game=Attaxx([size,size])
+    mcts=prepair_model(game)
+
+    count1 =2
+    count2=2
+    player=1
+    
+    state=game.get_initial_state()
+    while True: # Draw the background image
+        SCREEN.blit(BG,(0,0))
+        Ataxx_MENU_TEXT = get_font(50).render("ATAXX", True, "#d7fcd4")
+        Ataxx_MENU_RECT = Ataxx_MENU_TEXT.get_rect(center=(180,100))
+        SCREEN.blit(Ataxx_MENU_TEXT, Ataxx_MENU_RECT)
+        Ataxx_Pontuacao_TEXT = get_font(30).render(f"ALPHAZERO {count1} - {count2} BETAONE", True, "#d7fcd4")
+        Ataxx_Pontuacao_Rect = Ataxx_Pontuacao_TEXT.get_rect(center=(700,650))
+        SCREEN.blit(Ataxx_Pontuacao_TEXT,Ataxx_Pontuacao_Rect)
+        draw_board(state)
+        if player==1:
+            print("maquina")
+            time.sleep(1)
+            neut = game.change_perspective(state, player)
+            action = mcts.search(neut, player)
+            action = np.argmax(action)
+            state = game.get_next_state(state, action, player)
+            player=-player  # Switch player after a move       
+        elif player==-1:
+            print("maquina - betaone")
+            time.sleep(1)
             neut = game.change_perspective(state, -player)
             action = mcts.search(neut, player)
             action = np.argmax(action)
@@ -140,6 +181,5 @@ def play_attaxx(size):
         if win:
             return winner,count1,count2
         pygame.display.update()
-
 if __name__ == "__main__":
     play_attaxx(4)
