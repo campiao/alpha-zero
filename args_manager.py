@@ -12,14 +12,14 @@ def load_args_from_json(path, game_name, model_name):
             args = {
                 'game': 'Attaxx',
                 'num_iterations': 50,              # number of highest level iterations
-                'num_selfPlay_iterations': 250,   # number of self-play games to play within each iteration
-                'num_mcts_searches': 10,          # number of mcts simulations when selecting a move within self-play
-                'num_epochs': 2,                  # number of epochs for training on self-play data for each iteration
-                'batch_size': 1000,                 # batch size for training
+                'num_selfPlay_iterations': 50,   # number of self-play games to play within each iteration
+                'num_mcts_searches': 20,          # number of mcts simulations when selecting a move within self-play
+                'num_epochs': 5,                  # number of epochs for training on self-play data for each iteration
+                'batch_size': 500,                 # batch size for training
                 'temperature': 1.0,              # temperature for the softmax selection of moves
                 'C': 4,                           # the value of the constant policy
-                'augment': True,                 # whether to augment the training data with flipped states
-                'dirichlet_alpha': 1.0,           # the value of the dirichlet noise
+                'augment': False,                 # whether to augment the training data with flipped states
+                'dirichlet_alpha': 0.3,           # the value of the dirichlet noise
                 'dirichlet_epsilon': 0.125,       # the value of the dirichlet noise
                 'alias': f'{game_name}_{model_name}'
             }
