@@ -275,7 +275,10 @@ def menu_go():
 
               if PLAY_BUTTON.checkForInput(GO_MENU_MOUSE_POS):
                   if player == "human":
-                    b,w,win=play_go(goSizeBoard)
+                    print(goSizeBoard)
+                    if goSizeBoard == 7: size=True
+                    else: size=False
+                    b,w,win=play_go(size)
                     if win==1:
                       win="HUMAN"
                     else: win="ALPHAZERO"
