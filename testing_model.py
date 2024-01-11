@@ -15,7 +15,8 @@ class RandomPlayer():
         valid_moves = self.game.get_valid_moves(state, player)
         tmp = [i for i, j in enumerate(valid_moves) if j == 1]
         action = random.choice(tmp)
-        
+        print(action)
+
         return action
     
 
@@ -45,7 +46,7 @@ class GreedyPlayer():
         if self.game_type == 1:
             return self.attaxx_heuristic(state, move, player)
         else:
-            return self.go_heuristic()
+            return self.go_heuristic(state, move, player)
         
     def attaxx_heuristic(self, state, move, player):
         new_state = self.game.get_next_state(state, move, player)
@@ -56,8 +57,12 @@ class GreedyPlayer():
 
         return (count1-count2)*player
         
-    def go_heuristic():
-        pass
+    def go_heuristic(self, state, move, player):
+        new_state = self.game.get_next_state_mcts(state, move, player)
+        if move==81:
+            return 10000
+        return 0
+
 
 def get_model_action(game, mcts, state, player):
     neut = game.change_perspective(state, player)
@@ -80,7 +85,10 @@ def test_model(game, mcts, enemy, n_games):
                 state = game.get_next_state(state, action, player)
             else:
                 action = get_model_action(game, mcts, state, player)
-                state = game.get_next_state(state, action, player)
+                if game.name=="Go":
+                    state = game.get_next_state(state, action, player)
+                else:
+                    state = game.get_next_state(state, action, player)
             winner, win = game.get_value_and_terminated(state, action)
             if win:
                 print(f"Winner: {winner}, model: {model_player}")
@@ -176,8 +184,8 @@ def main():
     mcts = MCTS(model, game, args)
 
     random_opp = RandomPlayer(game)
-    greedy_opp = GreedyPlayer(game, game_type=1)
-    n_games = 30
+    greedy_opp = GreedyPlayer(game, game_type=2)
+    n_games = 5
 
     print(f"\nPlaying {n_games} games against RandomOpponent...")
     play_random_results = test_model(game, mcts, random_opp, n_games)
