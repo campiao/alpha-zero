@@ -8,7 +8,11 @@ import torch
 from alphazero import ResNet
 from args_manager import load_args_from_json
 
-Game="A4x4" # "A6x6" "G7x7" "G9x9" "A5x5"
+# Game = "A4x4"
+# Game = "A5x5"
+# Game = "A6x6"
+# Game = "G7x7" 
+Game = "G9x9"
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -31,11 +35,54 @@ def prepair_model(sizeBoard):
             model.load_state_dict(torch.load(f'AlphaZero/Models/{model_name}/model.pt', map_location=device))
             #optimizer.load_state_dict(torch.load(f'AlphaZero/Models/Attax_TestModel/optimizer_4.pt', map_location=device))
             state = game.get_initial_state()
-
-        return state,mcts,game 
+            return state,mcts,game 
+        
+        # if sizeBoard ==5:
+        #     game=Attaxx([int(Game[-1]),int(Game[-1])])
+        #     model_name = "Attaxx_try1"
+        #     args=load_args_from_json(f'AlphaZero/Models/{model_name}', Attaxx, model_name)
+        #     model = ResNet(game, 9, 64, device)
+        #     mcts = MCTS(model, game, args)
+        #     model.load_state_dict(torch.load(f'AlphaZero/Models/{model_name}/model.pt', map_location=device))
+        #     #optimizer.load_state_dict(torch.load(f'AlphaZero/Models/Attax_TestModel/optimizer_4.pt', map_location=device))
+        #     state = game.get_initial_state()
+        #     return state,mcts,game 
     
-    else: #jogo go
-        return
+        # if sizeBoard ==6:
+        #     game=Attaxx([int(Game[-1]),int(Game[-1])])
+        #     model_name = "Attaxx_try1"
+        #     args=load_args_from_json(f'AlphaZero/Models/{model_name}', Attaxx, model_name)
+        #     model = ResNet(game, 9, 64, device)
+        #     mcts = MCTS(model, game, args)
+        #     model.load_state_dict(torch.load(f'AlphaZero/Models/{model_name}/model.pt', map_location=device))
+        #     #optimizer.load_state_dict(torch.load(f'AlphaZero/Models/Attax_TestModel/optimizer_4.pt', map_location=device))
+        #     state = game.get_initial_state()
+
+        #     return state,mcts,game 
+    
+    else: 
+        # if sizeBoard == 7:
+        #     go_game = Go(board_size)
+        #     model_name = "Go_go91"
+        #     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        #     model = ResNet(game, 9, 64, device)
+        #     model.load_state_dict(torch.load(f'AlphaZero/Models/{model_name}/model.pt', map_location=device))
+        #     args=load_args_from_json(f'AlphaZero/Models/{model_name}', "Go", model_name)
+        #     #optimizer.load_state_dict(torch.load(f'AlphaZero/Models/Attax_TestModel/optimizer_4.pt', map_location=device))
+        #     mcts = MCTS(model, game, args)
+        #     return state,mcts,game 
+        
+        if sizeBoard == 9:
+            game = Go(False)
+            model_name = "Go_go91"
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            model = ResNet(game, 9, 64, device)
+            model.load_state_dict(torch.load(f'AlphaZero/Models/{model_name}/model.pt', map_location=device))
+            args=load_args_from_json(f'AlphaZero/Models/{model_name}', "Go", model_name)
+            #optimizer.load_state_dict(torch.load(f'AlphaZero/Models/Attax_TestModel/optimizer_4.pt', map_location=device))
+            mcts = MCTS(model, game, args)
+            state = game.get_initial_state()
+            return state,mcts,game 
     
 
 
@@ -50,23 +97,37 @@ def generate_move(state,mcts,game, ag):
         state = game.get_next_state(state, action, ag)
         return f"MOVE {move[0]} {move[1]} {move[2]} {move[3]}", state
     
-    else: # implementar go
-        return 
+    else: 
+        #neut = game.change_perspective(state, -ag)
+        action = mcts.search(state, ag)
+        action = np.argmax(action)
+        x,y = game.int_to_move_go(action)
+        state = game.get_next_state_mcts(state, action, ag)
+        return f"MOVE {x} {y}" , state
 
 
 def movimento_adversario(respostaServidor, state,ag):
+
     if Game[0] =="A":
-
         resposta = respostaServidor.split()
-        print(resposta)
+        #print(resposta)
 
-        # Iterar sobre as palavras e converter para inteiros, ignorando a primeira palavra "MOVE"
         movimentos = [int(r) for r in resposta[1:]]
         #print(movimentos)
         sizeBoard = int(Game[-1])
         #print("Size board = " , sizeBoard)
         #print(respostaServidor)
         action = movimentos[3] +  movimentos[2] *  sizeBoard +  movimentos[1] *  sizeBoard ** 2 +  movimentos[0] *  sizeBoard ** 3
+        state_new = game.get_next_state(state, action, -ag)
+        return state_new
+    else: 
+        resposta = respostaServidor.split()
+        movimentos = [int(r) for r in resposta[1:]]
+        #print(movimentos)
+        sizeBoard = int(Game[-1])
+        #print(resposta, " : resposta ")
+        action=movimentos[1] + movimentos[0] * sizeBoard
+        #print(action, ": action")
         state_new = game.get_next_state(state, action, -ag)
         return state_new
 
@@ -87,16 +148,16 @@ def connect_to_server(host='localhost', port=12345):
         ag=-1
     first=True
 
-    state, mcts, game = prepair_model(4)
+    state, mcts, game = prepair_model(9)
 
     while True:
         # Generate and send a random move
         #print("entrou")
         if ag == 1 or not first:
                # print("entrou aqui ")
-                print("state = \n" , state)
+               # print("state = \n" , state)
                 move,state = generate_move(state, mcts,game, ag)
-                print(state)
+                #print(state)
                 time.sleep(1)
                 client_socket.send(move.encode())
                 print("Send:",move)

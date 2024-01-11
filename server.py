@@ -1,7 +1,7 @@
 import socket
 import time
 
-Game="A4x4" # "A6x6" "G7x7" "G9x9" "A5x5"
+Game="G9x9" #"A4x4" # "A6x6" "G7x7" "G9x9" "A5x5"
 
 def start_server(host='localhost', port=12345):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
