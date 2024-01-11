@@ -275,7 +275,7 @@ class Go():
 
         state_copy = self.set_stone(a, b, state_copy, player)
 
-        if self.captures(state_copy, -player, a, b)[0] == True:
+        if self.captures(state_copy, player, a, b)[0] == True:
             return True
         else:
             libs, block = self.count(b, a, state_copy, player, [], [])
@@ -315,11 +315,14 @@ class Go():
         endgame = False
         
         black, white = self.count_influenced_territory_enhanced(state)
+        
 
         diff = black - white - self.komi
 
         player1moves = self.get_valid_moves(state, 1)
+        player1moves = np.delete(player1moves, -1)
         player2moves = self.get_valid_moves(state, -1)
+        player2moves = np.delete(player2moves, -1)
 
         if max(player1moves) == 0 or max(player2moves)==0:
             endgame=True
@@ -362,6 +365,9 @@ class Go():
         white_territory = 0
         visited = set()
 
+        black_pieces = self.count_stones(board, 1)
+        white_pieces = self.count_stones(board, 2)
+
         # Function to calculate influence score
         def influence_score(x, y):
             score = 0
@@ -390,7 +396,17 @@ class Go():
                 if board[i][j] == 0 and (i, j) not in visited:
                     explore_territory(i, j)
 
-        return black_territory, white_territory
+        return black_territory+black_pieces, white_territory+white_pieces
+    
+    def count_stones(self, state, player):
+        """Conta o número de pedras no tabuleiro para um jogador específico."""
+        count = 0
+        for row in state:
+            for stone in row:
+                if stone == player:
+                    count += 1
+
+        return  count
 
 
     def get_opponent(self, player):

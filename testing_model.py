@@ -59,11 +59,14 @@ class GreedyPlayer():
         
     def go_heuristic(self,state, move, player):
         copy_game = self.game.clone()
-        #new_state = copy_game.get_next_state_mcts(state, move, player)
+        new_state = copy_game.get_next_state(state, move, player)
+        winner, win, black, white = copy_game.check_win_and_over(new_state, move)
 
-        if move == self.game.action_size-1:
-            return 10000
-        return 0
+        if win:
+            return 100000*winner*player
+        
+        return (black-white)*player
+        
 
 
 def get_model_action(game, mcts, state, player):
@@ -82,25 +85,29 @@ def test_model(game, mcts, enemy, n_games):
         first_player = (first_player_decider % 2 == 0)
         model_player = 1 if not first_player else -1
         while True:
+            #game.print_board(state)
             if not player == model_player:
                 action = enemy.get_next_action(state, player)
                 state = game.get_next_state(state, action, player)
-                print(f"Enemy action: {action}")
+                #print(f"Enemy action: {action}")
             else:
                 action = get_model_action(game, mcts, state, player)
                 state = game.get_next_state(state, action, player)
-                print(f"Model action: {action}")
+                #print(f"Model action: {action}")
             
             if enemy.game_type == 1:
-                print(f"p1: {game.passed_player_1}, p2: {game.passed_player_2}")
+                #print(f"p1: {game.passed_player_1}, p2: {game.passed_player_2}")
+                pass
 
-            winner, win = game.get_value_and_terminated(state, action)
+            winner, win, count1, count2 = game.check_win_and_over(state, action)
+            print(f"Player1: {count1}, Player2: {count2}")
             if win:
+                game.print_board(state)
                 print(f"Winner: {winner}, model: {model_player}")
                 outcomes.append(winner*model_player)
                 break;
-            #game.print_board(state)
             player = - player
+        
         
         first_player_decider += 1
 

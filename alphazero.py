@@ -100,11 +100,12 @@ class Node:
     def expand(self, policy):
         for action, prob in enumerate(policy):
             if prob > 0:
+                copy_game = self.game.clone()
                 child_state = self.state.copy()
-                child_state = self.game.get_next_state(child_state, action, 1)
-                child_state = self.game.change_perspective(child_state, player=-1)
+                child_state = copy_game.get_next_state(child_state, action, 1)
+                child_state = copy_game.change_perspective(child_state, player=-1)
 
-                child = Node(self.game, self.args, child_state, self, action, prob)
+                child = Node(copy_game, self.args, child_state, self, action, prob)
                 self.children.append(child)
             
     def backpropagate(self, value):
@@ -134,6 +135,11 @@ class MCTS:
             * np.random.dirichlet([self.args['dirichlet_alpha']] * self.game.action_size)
         
         valid_moves = root.game.get_valid_moves(state, player)
+        if self.game.name == "Go":
+            tmp = valid_moves[-1]
+            valid_moves[-1] = 0
+            if max(valid_moves) == 0:
+                valid_moves[-1] = tmp
         policy *= valid_moves
         policy /= np.sum(policy)
         root.expand(policy)
@@ -152,6 +158,11 @@ class MCTS:
                 )
                 policy = torch.softmax(policy, axis=1).squeeze(0).cpu().numpy()
                 valid_moves = node.game.get_valid_moves(node.state, player)
+                if self.game.name == "Go":
+                    tmp = valid_moves[-1]
+                    valid_moves[-1] = 0
+                    if max(valid_moves) == 0:
+                        valid_moves[-1] = tmp
                 policy *= valid_moves
                 policy /= np.sum(policy)
                 
@@ -161,10 +172,12 @@ class MCTS:
             # print("B")
             node.backpropagate(value)    
             
-        action_probs = np.zeros(self.game.action_size)
+        ac = self.game.action_size
+        action_probs = np.zeros(ac)
         for child in root.children:
             action_probs[child.action_taken] = child.visit_count
         action_probs /= np.sum(action_probs)
+        print(np.argmax(action_probs))
         return action_probs
 
 class AlphaZero:
@@ -245,9 +258,10 @@ class AlphaZero:
         memory = []
         player = 1
         state = self.game.get_initial_state()
-        MAX_MOVES = 200
+        MAX_MOVES = 50
         count = 0
         while True:
+            self.game.print_board(state)
             count += 1
 
             neutral_state = self.game.change_perspective(state, player)
@@ -257,18 +271,24 @@ class AlphaZero:
             
             temperature_action_probs = action_probs ** (1 / self.args['temperature'])
             temperature_action_probs /= np.sum(temperature_action_probs)
-            action = np.random.choice(self.game.action_size, p=temperature_action_probs)
+            
+            ac = self.game.action_size
+            print(f"AC: {ac}, TMP size: {len(temperature_action_probs)}")
+            action = np.random.choice(ac, p=temperature_action_probs)
+            print(f"Action selected: {action}")
             if self.game.name == 'Attaxx':
                 state = self.game.get_next_state(state, action, player)
             else:
                 state = self.game.get_next_state_mcts(state, action, player)
             
             value, is_terminal = self.game.get_value_and_terminated(state,player)
+            print(value)
 
             if count >= MAX_MOVES:
-                print("Max moves reached")
-                is_terminal = True
-                value = 2
+                pass
+                #print("Max moves reached")
+                #is_terminal = True
+                #value = 2
             
             if is_terminal:
                 returnMemory = []
