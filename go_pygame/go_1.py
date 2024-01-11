@@ -1,5 +1,5 @@
 import numpy as np
-
+import copy
 
 class Go():
     EMPTY = 0
@@ -10,6 +10,7 @@ class Go():
     LIBERTY = 8
 
     def __init__(self, small_board=True):
+        self.small_board = small_board
         self.row_count = 7 if small_board else 9
         self.column_count = 7 if small_board else 9
         self.board_size = 7 if small_board else 9
@@ -25,6 +26,18 @@ class Go():
         self.passed_player_1 = False
         self.passed_player_2 = False
 
+    def clone(self):
+        copia = Go(small_board=self.small_board)
+        copia.liberties = copy.deepcopy(self.liberties)
+        copia.block = copy.deepcopy(self.block)
+        copia.seki_count = copy.deepcopy(self.seki_count)
+        copia.seki_liberties = copy.deepcopy(self.seki_liberties)
+        copia.state_history = copy.deepcopy(self.state_history)
+        copia.currrent_player = copy.deepcopy(self.currrent_player)
+        copia.passed_player_1 = copy.deepcopy(self.passed_player_1)
+        copia.passed_player_2 = copy.deepcopy(self.passed_player_2)
+
+        return copia
 
     def get_initial_state(self):
         board = np.zeros((self.row_count, self.column_count))
