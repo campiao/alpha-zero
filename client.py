@@ -43,21 +43,10 @@ def generate_move(state,mcts,game, ag):
     
 
     if Game[0] == "A":
-
-        game=Attaxx([int(Game[-1]),int(Game[-1])])
         #neut = game.change_perspective(state, -ag) 
         action = mcts.search(state,  ag)
         action = np.argmax(action)
-
-        move = [0,0,0,0]
-        move[3] = action % 4
-        action = (action - move[3]) // 4
-        move[2] = action % 4
-        action = (action - move[2]) // 4
-        move[1] = action % 4
-        action = (action - move[1]) // 4
-        move[0] = action
-
+        move=game.int_to_move(action)
         state = game.get_next_state(state, action, ag)
         return f"MOVE {move[0]} {move[1]} {move[2]} {move[3]}", state
     
@@ -65,11 +54,11 @@ def generate_move(state,mcts,game, ag):
         return 
 
 
-def movimento_adversario(respostaServidor, state):
+def movimento_adversario(respostaServidor, state,ag):
     if Game[0] =="A":
 
         resposta = respostaServidor.split()
-        #print(resposta)
+        print(resposta)
 
         # Iterar sobre as palavras e converter para inteiros, ignorando a primeira palavra "MOVE"
         movimentos = [int(r) for r in resposta[1:]]
@@ -78,7 +67,7 @@ def movimento_adversario(respostaServidor, state):
         #print("Size board = " , sizeBoard)
         #print(respostaServidor)
         action = movimentos[3] +  movimentos[2] *  sizeBoard +  movimentos[1] *  sizeBoard ** 2 +  movimentos[0] *  sizeBoard ** 3
-        state_new = game.get_next_state(state, action, ag)
+        state_new = game.get_next_state(state, action, -ag)
         return state_new
 
 def connect_to_server(host='localhost', port=12345):
@@ -107,7 +96,7 @@ def connect_to_server(host='localhost', port=12345):
                # print("entrou aqui ")
                 print("state = \n" , state)
                 move,state = generate_move(state, mcts,game, ag)
-                
+                print(state)
                 time.sleep(1)
                 client_socket.send(move.encode())
                 print("Send:",move)
@@ -130,7 +119,7 @@ def connect_to_server(host='localhost', port=12345):
         response = client_socket.recv(1024).decode()
         print(f"Server Response2: {response}")
         if "END" in response: break
-        state = movimento_adversario(response, state)
+        state = movimento_adversario(response, state, ag)
         # Add some condition to break the loop, if necessary
         # Example: If server sends a certain message, or after a number of moves
 

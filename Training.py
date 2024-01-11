@@ -25,7 +25,7 @@ if __name__ == '__main__':
 	game = int(input())
 	if game == 1:
 		print("Select Go board size (input 1 or 2)1\n\t1. 7*7\n\t2. 9*9")
-		small_board = input()
+		small_board = int(input())
 		if small_board == 1:
 			small_board = True
 		else:
