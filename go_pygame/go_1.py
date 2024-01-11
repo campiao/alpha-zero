@@ -9,7 +9,7 @@ class Go():
     WHITEMARKER = 5
     LIBERTY = 8
 
-    def __init__(self, small_board=True):
+    def __init__(self, small_board):
         self.small_board = small_board
         self.row_count = 7 if small_board else 9
         self.column_count = 7 if small_board else 9
@@ -188,6 +188,8 @@ class Go():
                 self.passed_player_2 = True
             else:
                 self.passed_player_1 = True
+            state_copy = np.copy(state)
+            self.state_history.append(np.copy(state_copy))
             return state # pass move
 
         a = action // self.row_count
@@ -210,6 +212,9 @@ class Go():
                 self.passed_player_2 = True
             else:
                 self.passed_player_1 = True
+            
+            state_copy = np.copy(state)
+            self.state_history.append(np.copy(state_copy))
             return state # pass move
 
         a = action // self.row_count
@@ -230,6 +235,29 @@ class Go():
     def is_valid_move(self, state: list, action: tuple, player: int) -> bool:
         a, b = action[0], action[1]  # Mantenha as coordenadas originais
         state_copy = np.copy(state).astype(np.int8)
+
+        neib = 4
+        for i in range(a-1,a+2):
+            if i == a:
+                continue
+            if i < 0 or i >= self.row_count:
+                neib-=1
+                continue
+            if state[i][b]==-player:
+                neib-=1
+
+        for j in range(b-1,b+2):
+            if j == b:
+                continue
+            if j < 0 or j >= self.column_count:
+                neib-=1
+                continue
+            if state[a][j]==-player:
+                neib-=1
+        
+        if neib <= 0:
+            return False
+
 
         if len(self.state_history) > 1:
             if np.array_equal(state, self.state_history[-2]):
@@ -276,22 +304,42 @@ class Go():
         Returns the value of the state and if the game is over.
         '''
 
-        scoring, endgame = self.scoring(state)
+        winner, game_over, _, _ = self.check_win_and_over(state, action = None)
+        return winner, game_over
+
+            
+    def check_win_and_over(self, state, action):
+        black = 0
+        white = 0
+        empty = 0
+        endgame = False
+        
+        black, white = self.count_influenced_territory_enhanced(state)
+
+        diff = black - white - self.komi
+
+        player1moves = self.get_valid_moves(state, 1)
+        player2moves = self.get_valid_moves(state, -1)
+
+        if max(player1moves) == 0 or max(player2moves)==0:
+            endgame=True
 
         if self.passed_player_1 and self.passed_player_2:
             endgame=True
 
         if endgame:
-            if scoring > 0:
-                return 1, True
+            if diff>0:
+                winner = 1
+            elif diff<0:
+                winner = -1
             else:
-                return -1, True
+                winner = 2
         else:
-            if scoring > 0:
-                return 1, False
-            else:
-                return -1, False
-                
+            winner = 0
+                            
+        return winner, endgame, black, white + self.komi
+
+              
 
     def scoring(self, state):
         '''
@@ -303,12 +351,6 @@ class Go():
         empty = 0
         endgame = False
         # print("Scoring")
-        for x in range(self.column_count):
-            for y in range(self.row_count):
-                if state[x][y] == self.EMPTY:
-                    empty += 1
-                    if empty >= self.column_count * self.row_count // 5: # if more than 1/4 of the board is empty, it is not the endgame
-                        endgame = False
 
         black, white = self.count_influenced_territory_enhanced(state)
                             
