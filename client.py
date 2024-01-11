@@ -126,7 +126,7 @@ def movimento_adversario(respostaServidor, state,ag):
         #print(movimentos)
         sizeBoard = int(Game[-1])
         #print(resposta, " : resposta ")
-        action=movimentos[1] + movimentos[0] * sizeBoard
+        action=movimentos[0] + movimentos[1] * sizeBoard
         #print(action, ": action")
         state_new = game.get_next_state(state, action, -ag)
         return state_new
@@ -155,12 +155,13 @@ def connect_to_server(host='localhost', port=12345):
         #print("entrou")
         if ag == 1 or not first:
                # print("entrou aqui ")
-               # print("state = \n" , state)
+                print("state = \n" , state)
+               
                 move,state = generate_move(state, mcts,game, ag)
                 #print(state)
                 time.sleep(1)
                 client_socket.send(move.encode())
-                print("Send:",move)
+                #print("\nSend:",move)
             
                 # Wait for server response
                 response = client_socket.recv(1024).decode()
