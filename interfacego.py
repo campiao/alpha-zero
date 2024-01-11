@@ -10,6 +10,7 @@ from alphazero import ResNet
 from alphazero import MCTS
 from button import Button
 import os
+from args_manager import load_args_from_json
 
 
 # Define as dimensões da janela
@@ -60,23 +61,11 @@ def draw_board(board_state):
 
 
 def prepair_model(game):
-    args = {
-            'game': 'Go',
-            'num_iterations': 10,             # number of highest level iterations
-            'num_selfPlay_iterations': 10,   # number of self-play games to play within each iteration
-            'num_mcts_searches': 100,         # number of mcts simulations when selecting a move within self-play
-            'num_epochs': 25,                  # number of epochs for training on self-play data for each iteration
-            'batch_size': 8,                # batch size for training
-            'temperature': 1.25,              # temperature for the softmax selection of moves
-            'C': 2,                           # the value of the constant policy
-            'augment': False,                 # whether to augment the training data with flipped states
-            'dirichlet_alpha': 0.3,           # the value of the dirichlet noise
-            'dirichlet_epsilon': 0.25,        # the value of the dirichlet noise
-            'alias': ('Goolaola')
-    }
+    model_name = "Go_go91"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = ResNet(game, 9, 3, device)
-    model.load_state_dict(torch.load(f'AlphaZero/Models/Goolaola/model_1.pt', map_location=device))
+    model = ResNet(game, 9, 64, device)
+    model.load_state_dict(torch.load(f'AlphaZero/Models/{model_name}/model.pt', map_location=device))
+    args=load_args_from_json(f'AlphaZero/Models/{model_name}', "Go", model_name)
     #optimizer.load_state_dict(torch.load(f'AlphaZero/Models/Attax_TestModel/optimizer_4.pt', map_location=device))
     mcts = MCTS(model, game, args)
     return mcts
@@ -86,6 +75,8 @@ def prepair_model(game):
 
 def play_go(board_size):
     go_game = Go(board_size)
+    if board_size == False:board_size=9
+    else: board_size=7
     player = 1
     action=0
     b=0
@@ -124,6 +115,7 @@ def play_go(board_size):
                         row = (mouse_pos[1] - ((720 - 400) // 2)) // 75 +margin
 
                         print(col, row)
+                        print(board_size)
                         if  row >=0 and col >=0  and row < board_size and col < board_size:
                             action=col + row * board_size
                             if   go_game.is_valid_move(state, (row,col), player):

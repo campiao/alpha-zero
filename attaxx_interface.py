@@ -48,7 +48,7 @@ def get_font(size): # Returns Press-Start-2P in the desired size
 
 
 def prepair_model(game):
-    model_name = "Attaxx_try51"
+    model_name = "Attaxx_try61"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = ResNet(game, 9, 64, device)
     args=load_args_from_json(f'AlphaZero/Models/{model_name}', Attaxx, model_name)
