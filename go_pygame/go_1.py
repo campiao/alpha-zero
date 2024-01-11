@@ -42,6 +42,9 @@ class Go():
     def get_initial_state(self):
         board = np.zeros((self.row_count, self.column_count))
         self.state_history = [np.copy(board)]
+
+        self.passed_player_1 = False
+        self.passed_player_2 = False
         return board
 
     def count(self, x, y, state: list, player: int, liberties: list, block: list):
@@ -203,6 +206,10 @@ class Go():
     def get_next_state(self, state, action, player):
 
         if action == self.row_count * self.column_count:
+            if self.passed_player_1:
+                self.passed_player_2 = True
+            else:
+                self.passed_player_1 = True
             return state # pass move
 
         a = action // self.row_count
@@ -211,6 +218,8 @@ class Go():
         state_copy = np.copy(state)
         state[a][b] = player
         state = self.captures(state, -player, a, b)[1]
+        self.passed_player_1 = False
+        self.passed_player_2 = False
 
         self.state_history.append(np.copy(state_copy))
 

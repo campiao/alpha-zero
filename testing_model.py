@@ -8,8 +8,9 @@ from args_manager import load_args_from_json, save_args_to_json
 
 
 class RandomPlayer():
-    def __init__(self, game) -> None:
+    def __init__(self, game, game_type) -> None:
         self.game = game
+        self.game_type = game_type
     
     def get_next_action(self, state, player):
         valid_moves = self.game.get_valid_moves(state, player)
@@ -42,10 +43,10 @@ class GreedyPlayer():
         return best_action_tuple[0]
     
     def get_value(self, state, move, player):
-        if self.game_type == 1:
+        if self.game_type == 2:
             return self.attaxx_heuristic(state, move, player)
         else:
-            return self.go_heuristic()
+            return self.go_heuristic(state, move, player)
         
     def attaxx_heuristic(self, state, move, player):
         new_state = self.game.get_next_state(state, move, player)
@@ -56,8 +57,13 @@ class GreedyPlayer():
 
         return (count1-count2)*player
         
-    def go_heuristic():
-        pass
+    def go_heuristic(self,state, move, player):
+        copy_game = self.game.clone()
+        #new_state = copy_game.get_next_state_mcts(state, move, player)
+
+        if move == self.game.action_size-1:
+            return 10000
+        return 0
 
 
 def get_model_action(game, mcts, state, player):
@@ -79,9 +85,15 @@ def test_model(game, mcts, enemy, n_games):
             if not player == model_player:
                 action = enemy.get_next_action(state, player)
                 state = game.get_next_state(state, action, player)
+                print(f"Enemy action: {action}")
             else:
                 action = get_model_action(game, mcts, state, player)
                 state = game.get_next_state(state, action, player)
+                print(f"Model action: {action}")
+            
+            if enemy.game_type == 1:
+                print(f"p1: {game.passed_player_1}, p2: {game.passed_player_2}")
+
             winner, win = game.get_value_and_terminated(state, action)
             if win:
                 print(f"Winner: {winner}, model: {model_player}")
@@ -176,9 +188,9 @@ def main():
 
     mcts = MCTS(model, game, args)
 
-    random_opp = RandomPlayer(game)
-    greedy_opp = GreedyPlayer(game, game_type=1)
-    n_games = 30
+    random_opp = RandomPlayer(game, game_type)
+    greedy_opp = GreedyPlayer(game, game_type=game_type)
+    n_games = 5
 
     print(f"\nPlaying {n_games} games against RandomOpponent...")
     play_random_results = test_model(game, mcts, random_opp, n_games)
