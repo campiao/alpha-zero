@@ -1,0 +1,1 @@
+{"game": "Go", "num_iterations": 20, "num_selfPlay_iterations": 15, "num_mcts_searches": 200, "num_epochs": 20, "batch_size": 16, "temperature": 3.0, "C": 2, "augment": false, "dirichlet_alpha": 0.03, "dirichlet_epsilon": 0.125, "alias": "Go_try71"}
