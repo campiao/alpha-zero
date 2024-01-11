@@ -7,6 +7,11 @@ class Attaxx:
         self.row_count : int = args[1]
         self.name="Attaxx"
         self.action_size : int = (self.column_count * self.row_count) ** 2
+
+    def clone(self):
+        copia = Attaxx((self.row_count,self.column_count))
+
+        return copia
     
     def get_initial_state(self):
         state = np.zeros((self.column_count, self.row_count))
