@@ -59,6 +59,7 @@ class GreedyPlayer():
     def go_heuristic():
         pass
 
+
 def get_model_action(game, mcts, state, player):
     neut = game.change_perspective(state, player)
     action = mcts.search(neut, 1)
@@ -186,6 +187,7 @@ def main():
 
     process_outcomes(play_random_results, "Random")
     process_outcomes(play_greedy_results, "Greedy")
+
 
 main()
     

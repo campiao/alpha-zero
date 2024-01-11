@@ -123,7 +123,8 @@ class MCTS:
         
     @torch.no_grad()
     def search(self, state, player):
-        root = Node(self.game, self.args, state, visit_count=1)
+        copy_game = self.game.clone()
+        root = Node(copy_game, self.args, state, visit_count=1)
         
         policy, _ = self.model(
             torch.tensor(self.game.get_encoded_state(state), device=self.model.device).unsqueeze(0)
@@ -132,7 +133,7 @@ class MCTS:
         policy = (1 - self.args['dirichlet_epsilon']) * policy + self.args['dirichlet_epsilon'] \
             * np.random.dirichlet([self.args['dirichlet_alpha']] * self.game.action_size)
         
-        valid_moves = self.game.get_valid_moves(state, player)
+        valid_moves = root.game.get_valid_moves(state, player)
         policy *= valid_moves
         policy /= np.sum(policy)
         root.expand(policy)
@@ -143,14 +144,14 @@ class MCTS:
             while node.is_expanded():
                 node = node.select()
                 
-            value, is_terminal = self.game.get_value_and_terminated(node.state,player)
-            value = self.game.get_opponent_value(value)
+            value, is_terminal = node.game.get_value_and_terminated(node.state,player)
+            value = node.game.get_opponent_value(value)
             
             if not is_terminal:
                 policy, value = self.model(torch.tensor(self.game.get_encoded_state(node.state), device=self.model.device).unsqueeze(0)
                 )
                 policy = torch.softmax(policy, axis=1).squeeze(0).cpu().numpy()
-                valid_moves = self.game.get_valid_moves(node.state, player)
+                valid_moves = node.game.get_valid_moves(node.state, player)
                 policy *= valid_moves
                 policy /= np.sum(policy)
                 
@@ -244,7 +245,10 @@ class AlphaZero:
         memory = []
         player = 1
         state = self.game.get_initial_state()
+        MAX_MOVES = 200
+        count = 0
         while True:
+            count += 1
 
             neutral_state = self.game.change_perspective(state, player)
             action_probs = self.mcts.search(neutral_state, 1)
@@ -260,6 +264,11 @@ class AlphaZero:
                 state = self.game.get_next_state_mcts(state, action, player)
             
             value, is_terminal = self.game.get_value_and_terminated(state,player)
+
+            if count >= MAX_MOVES:
+                print("Max moves reached")
+                is_terminal = True
+                value = 2
             
             if is_terminal:
                 returnMemory = []
