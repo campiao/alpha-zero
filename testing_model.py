@@ -11,7 +11,7 @@ class RandomPlayer():
     def __init__(self, game, game_type) -> None:
         self.game = game
         self.game_type = game_type
-    
+
     def get_next_action(self, state, player):
         valid_moves = self.game.get_valid_moves(state, player)
         tmp = [i for i, j in enumerate(valid_moves) if j == 1]
@@ -64,9 +64,9 @@ class GreedyPlayer():
 
         if win:
             return 100000*winner*player
-        
+
         return (black-white)*player
-        
+
 
 
 def get_model_action(game, mcts, state, player):
@@ -94,7 +94,7 @@ def test_model(game, mcts, enemy, n_games):
                 action = get_model_action(game, mcts, state, player)
                 state = game.get_next_state(state, action, player)
                 #print(f"Model action: {action}")
-            
+
             if enemy.game_type == 1:
                 #print(f"p1: {game.passed_player_1}, p2: {game.passed_player_2}")
                 pass
@@ -108,7 +108,7 @@ def test_model(game, mcts, enemy, n_games):
                 break;
             player = - player
         
-        
+
         first_player_decider += 1
 
     return outcomes

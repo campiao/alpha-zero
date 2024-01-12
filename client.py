@@ -126,7 +126,7 @@ def movimento_adversario(respostaServidor, state,ag):
         #print(movimentos)
         sizeBoard = int(Game[-1])
         #print(resposta, " : resposta ")
-        action=movimentos[1] + movimentos[0] * sizeBoard
+        action=movimentos[0] + movimentos[1] * sizeBoard
         #print(action, ": action")
         state_new = game.get_next_state(state, action, -ag)
         return state_new
@@ -148,33 +148,34 @@ def connect_to_server(host='localhost', port=12345):
         ag=-1
     first=True
 
-    state, mcts, game = prepair_model(9)
+    state, mcts, game = prepair_model(Game[-1])
 
     while True:
         # Generate and send a random move
         #print("entrou")
         if ag == 1 or not first:
                # print("entrou aqui ")
-               # print("state = \n" , state)
+                print("state = \n" , state)
+               
                 move,state = generate_move(state, mcts,game, ag)
                 #print(state)
                 time.sleep(1)
                 client_socket.send(move.encode())
-                print("Send:",move)
+                #print("\nSend:",move)
             
                 # Wait for server response
                 response = client_socket.recv(1024).decode()
                 print(f"Server Response1: {response}")
                 if "END" in response: break
                     
-                while response == 'INVALID':
-                    print("Invalid Move")
-                    move = generate_move(state, mcts,game, ag)
-                    time.sleep(1)
-                    client_socket.send(move.encode())
-                    print("Send:",move)
-                    response = client_socket.recv(1024).decode()
-                    print(f"Server Response1: {response}")
+                # while response == 'INVALID':
+                #     print("Invalid Move")
+                #     move = generate_move(state, mcts,game, ag)
+                #     time.sleep(1)
+                #     client_socket.send(move.encode())
+                #     print("Send:",move)
+                #     response = client_socket.recv(1024).decode()
+                #     print(f"Server Response1: {response}")
                         
         first=False
         response = client_socket.recv(1024).decode()
