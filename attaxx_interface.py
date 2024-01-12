@@ -80,9 +80,9 @@ def play_attaxx(size):
         Ataxx_MENU_TEXT = get_font(50).render("ATAXX", True, "#d7fcd4")
         Ataxx_MENU_RECT = Ataxx_MENU_TEXT.get_rect(center=(180,100))
         SCREEN.blit(Ataxx_MENU_TEXT, Ataxx_MENU_RECT)
-        Ataxx_Pontuacao_TEXT = get_font(30).render(f"HUMAN {count1} - {count2} ALPHAZERO", True, "#d7fcd4")
-        Ataxx_Pontuacao_Rect = Ataxx_Pontuacao_TEXT.get_rect(center=(700,650))
-        SCREEN.blit(Ataxx_Pontuacao_TEXT,Ataxx_Pontuacao_Rect)
+        # Ataxx_Pontuacao_TEXT = get_font(30).render(f"HUMAN {count1} - {count2} ALPHAZERO", True, "#d7fcd4")
+        # Ataxx_Pontuacao_Rect = Ataxx_Pontuacao_TEXT.get_rect(center=(700,650))
+        # SCREEN.blit(Ataxx_Pontuacao_TEXT,Ataxx_Pontuacao_Rect)
         draw_board(state)
         if player==1:
             for event in pygame.event.get():
@@ -157,9 +157,9 @@ def play_attaxx_aivsai(size):
         Ataxx_MENU_TEXT = get_font(50).render("ATAXX", True, "#d7fcd4")
         Ataxx_MENU_RECT = Ataxx_MENU_TEXT.get_rect(center=(180,100))
         SCREEN.blit(Ataxx_MENU_TEXT, Ataxx_MENU_RECT)
-        Ataxx_Pontuacao_TEXT = get_font(30).render(f"ALPHAZERO {count1} - {count2} BETAONE", True, "#d7fcd4")
-        Ataxx_Pontuacao_Rect = Ataxx_Pontuacao_TEXT.get_rect(center=(700,650))
-        SCREEN.blit(Ataxx_Pontuacao_TEXT,Ataxx_Pontuacao_Rect)
+        # Ataxx_Pontuacao_TEXT = get_font(30).render(f"ALPHAZERO {count1} - {count2} BETAONE", True, "#d7fcd4")
+        # Ataxx_Pontuacao_Rect = Ataxx_Pontuacao_TEXT.get_rect(center=(700,650))
+        # SCREEN.blit(Ataxx_Pontuacao_TEXT,Ataxx_Pontuacao_Rect)
         draw_board(state)
         if player==1:
             print("maquina")
