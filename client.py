@@ -148,7 +148,7 @@ def connect_to_server(host='localhost', port=12345):
         ag=-1
     first=True
 
-    state, mcts, game = prepair_model(9)
+    state, mcts, game = prepair_model(Game[-1])
 
     while True:
         # Generate and send a random move
