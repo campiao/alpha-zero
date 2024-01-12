@@ -366,7 +366,7 @@ class Go():
         visited = set()
 
         black_pieces = self.count_stones(board, 1)
-        white_pieces = self.count_stones(board, 2)
+        white_pieces = self.count_stones(board, -1)
 
         # Function to calculate influence score
         def influence_score(x, y):
