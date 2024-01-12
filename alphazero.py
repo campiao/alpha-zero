@@ -177,7 +177,7 @@ class MCTS:
         for child in root.children:
             action_probs[child.action_taken] = child.visit_count
         action_probs /= np.sum(action_probs)
-        print(np.argmax(action_probs))
+        #print(np.argmax(action_probs))
         return action_probs
 
 class AlphaZero:
@@ -258,10 +258,10 @@ class AlphaZero:
         memory = []
         player = 1
         state = self.game.get_initial_state()
-        MAX_MOVES = 50
+        MAX_MOVES = 200
         count = 0
         while True:
-            self.game.print_board(state)
+            #self.game.print_board(state)
             count += 1
 
             neutral_state = self.game.change_perspective(state, player)
@@ -273,22 +273,21 @@ class AlphaZero:
             temperature_action_probs /= np.sum(temperature_action_probs)
             
             ac = self.game.action_size
-            print(f"AC: {ac}, TMP size: {len(temperature_action_probs)}")
+            #print(f"AC: {ac}, TMP size: {len(temperature_action_probs)}")
             action = np.random.choice(ac, p=temperature_action_probs)
-            print(f"Action selected: {action}")
+            #print(f"Action selected: {action}")
             if self.game.name == 'Attaxx':
                 state = self.game.get_next_state(state, action, player)
             else:
                 state = self.game.get_next_state_mcts(state, action, player)
             
             value, is_terminal = self.game.get_value_and_terminated(state,player)
-            print(value)
+            #print(value)
 
             if count >= MAX_MOVES:
-                pass
                 #print("Max moves reached")
-                #is_terminal = True
-                #value = 2
+                is_terminal = True
+                value = 2
             
             if is_terminal:
                 returnMemory = []

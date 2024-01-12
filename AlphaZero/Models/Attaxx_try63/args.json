@@ -1,1 +1,0 @@
-{"game": "Attaxx", "num_iterations": 100, "num_selfPlay_iterations": 250, "num_mcts_searches": 10, "num_epochs": 2, "batch_size": 1000, "temperature": 1.0, "C": 4, "augment": true, "dirichlet_alpha": 1.0, "dirichlet_epsilon": 0.125, "alias": "Attaxx_try63"}

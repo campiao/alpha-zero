@@ -100,7 +100,7 @@ def test_model(game, mcts, enemy, n_games):
                 pass
 
             winner, win, count1, count2 = game.check_win_and_over(state, action)
-            print(f"Player1: {count1}, Player2: {count2}")
+            #print(f"Player1: {count1}, Player2: {count2}")
             if win:
                 game.print_board(state)
                 print(f"Winner: {winner}, model: {model_player}")
@@ -197,7 +197,7 @@ def main():
 
     random_opp = RandomPlayer(game, game_type)
     greedy_opp = GreedyPlayer(game, game_type=game_type)
-    n_games = 5
+    n_games = 10
 
     print(f"\nPlaying {n_games} games against RandomOpponent...")
     play_random_results = test_model(game, mcts, random_opp, n_games)
