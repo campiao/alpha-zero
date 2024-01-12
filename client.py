@@ -168,14 +168,14 @@ def connect_to_server(host='localhost', port=12345):
                 print(f"Server Response1: {response}")
                 if "END" in response: break
                     
-                while response == 'INVALID':
-                    print("Invalid Move")
-                    move = generate_move(state, mcts,game, ag)
-                    time.sleep(1)
-                    client_socket.send(move.encode())
-                    print("Send:",move)
-                    response = client_socket.recv(1024).decode()
-                    print(f"Server Response1: {response}")
+                # while response == 'INVALID':
+                #     print("Invalid Move")
+                #     move = generate_move(state, mcts,game, ag)
+                #     time.sleep(1)
+                #     client_socket.send(move.encode())
+                #     print("Send:",move)
+                #     response = client_socket.recv(1024).decode()
+                #     print(f"Server Response1: {response}")
                         
         first=False
         response = client_socket.recv(1024).decode()
