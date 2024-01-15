@@ -428,3 +428,8 @@ class Go():
         return state * player
 
 
+    def int_to_move_go(self, action):
+        a = action // self.row_count
+        b = action % self.column_count
+
+        return a,b

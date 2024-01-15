@@ -74,7 +74,7 @@ def prepair_model(sizeBoard):
         
         if sizeBoard == 9:
             game = Go(False)
-            model_name = "Go_go91"
+            model_name = "Go_final9"
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             model = ResNet(game, 9, 64, device)
             model.load_state_dict(torch.load(f'AlphaZero/Models/{model_name}/model.pt', map_location=device))
@@ -122,12 +122,18 @@ def movimento_adversario(respostaServidor, state,ag):
         return state_new
     else: 
         resposta = respostaServidor.split()
-        movimentos = [int(r) for r in resposta[1:]]
-        #print(movimentos)
         sizeBoard = int(Game[-1])
-        #print(resposta, " : resposta ")
-        action=movimentos[0] + movimentos[1] * sizeBoard
-        #print(action, ": action")
+       # print("resposta = ",resposta)
+        if 'PASS' in resposta:
+            if(sizeBoard==7): action = 49
+            else: action = 81
+        else:
+            movimentos = [int(r) for r in resposta[1:]]
+            #print(movimentos)
+            #print(resposta, " : resposta ")
+            action=movimentos[0] + movimentos[1] * sizeBoard
+            #print(action, ": action")
+
         state_new = game.get_next_state(state, action, -ag)
         return state_new
 
@@ -147,8 +153,8 @@ def connect_to_server(host='localhost', port=12345):
     else:
         ag=-1
     first=True
-
-    state, mcts, game = prepair_model(Game[-1])
+    
+    state, mcts, game = prepair_model(int(Game[-1]))
 
     while True:
         # Generate and send a random move
